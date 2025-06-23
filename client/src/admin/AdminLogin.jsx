@@ -46,11 +46,6 @@ const AdminLogin = () => {
           >
             Login
           </button>
-          {/* <div className="text-center mt-2">
-            <a href="#" className="text-sm text-gray-600 dark:text-gray-300 hover:underline">
-              Forgot password?
-            </a>
-          </div> */}
         </div>
       </div>
     </div>

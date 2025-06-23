@@ -7,11 +7,11 @@ const exampleService = {
   isActive: true
 };
 
-// export interface Service {
-//   id: number;
-//   title: string;
-//   description: string;
-//   image: string;
-//   alt: string;
-//   isActive: boolean;
-// }
+const exampleTestimonial = {
+  id: 1,
+  name: "John Doe",
+  position: "CEO of Example Corp",
+  image: "john_doe.jpg",
+  alt: "John Doe",
+  testimonial: "This company did an amazing job on our project!"
+};

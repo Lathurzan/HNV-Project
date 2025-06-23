@@ -41,8 +41,8 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Admin login route */}
-        <Route path="/admin-login" element={<AdminLogin />} />
+        {/* Admin login route using env variable, now URL-safe */}
+        <Route path={import.meta.env.VITE_ADMIN_PATH} element={<AdminLogin />} />
 
         {/* Protected admin routes */}
         <Route
@@ -63,6 +63,8 @@ function App() {
           <Route path="contact" element={<Contact />} />
           <Route path="*" element={<NotFound />} />
         </Route>
+        {/* Catch-all NotFound for any other unmatched route */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
   );
