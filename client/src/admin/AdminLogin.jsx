@@ -1,18 +1,91 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import * as jwtDecode from 'jwt-decode';
+
+const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID'; // TODO: Replace with your actual client ID
+const ADMIN_EMAIL = 'admin@example.com'; // TODO: Replace with your allowed admin email
 
 const AdminLogin = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const googleDivRef = useRef(null);
 
-  const handleLogin = () => {
-    if (username === 'admin' && password === 'hnv123') {
-      localStorage.setItem('admin-auth', 'true');
-      navigate('/admin');
-    } else {
-      setError('Invalid credentials');
+  // Handle Google login callback
+  const handleGoogleCallback = async (response) => {
+    try {
+      // Send credential to backend for verification
+      const res = await fetch('http://localhost:5000/api/admin/google-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: response.credential }),
+      });
+      const data = await res.json();
+      if (res.ok && data.auth && data.email === ADMIN_EMAIL) {
+        localStorage.setItem('admin-auth', 'true');
+        navigate('/admin');
+      } else {
+        setError(data.message || 'You are not authorized to access this panel');
+      }
+    } catch (err) {
+      setError('Google login failed. Try again.');
+    }
+  };
+
+  // Load Google script and render button
+  useEffect(() => {
+    // Load script if not present
+    if (!window.google) {
+      const script = document.createElement('script');
+      script.src = 'https://accounts.google.com/gsi/client';
+      script.async = true;
+      script.defer = true;
+      script.onload = () => {
+        if (window.google && googleDivRef.current) {
+          window.google.accounts.id.initialize({
+            client_id: GOOGLE_CLIENT_ID,
+            callback: handleGoogleCallback,
+          });
+          window.google.accounts.id.renderButton(googleDivRef.current, {
+            theme: 'outline',
+            size: 'large',
+            type: 'standard',
+          });
+        }
+      };
+      document.body.appendChild(script);
+    } else if (window.google && googleDivRef.current) {
+      window.google.accounts.id.initialize({
+        client_id: GOOGLE_CLIENT_ID,
+        callback: handleGoogleCallback,
+      });
+      window.google.accounts.id.renderButton(googleDivRef.current, {
+        theme: 'outline',
+        size: 'large',
+        type: 'standard',
+      });
+    }
+  }, []);
+
+  // Handle classic login
+  const handleLogin = async () => {
+    setError('');
+    try {
+      const response = await fetch('http://localhost:5000/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+      });
+      const data = await response.json();
+      if (response.ok && data.auth) {
+        localStorage.setItem('admin-auth', 'true');
+        navigate('/admin');
+      } else {
+        setError(data.message || 'Invalid credentials');
+      }
+    } catch (err) {
+      setError('Login failed. Try again.');
     }
   };
 
@@ -46,6 +119,9 @@ const AdminLogin = () => {
           >
             Login
           </button>
+          <div className="flex items-center justify-center mt-4">
+            <div ref={googleDivRef} id="googleSignInDiv"></div>
+          </div>
         </div>
       </div>
     </div>

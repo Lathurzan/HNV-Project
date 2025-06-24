@@ -12,6 +12,7 @@ app.use(express.json());
 app.use('/api/admin', require('./routes/adminRoutes'));
 app.use('/api/about', require('./routes/aboutRoutes'));
 app.use('/api/projects', require('./routes/projectRoutes'));
+app.use('/api/sectors', require('./routes/sectorRoutes'));
 
 // Start server
 const PORT = process.env.PORT || 5000;

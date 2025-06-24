@@ -1,62 +1,135 @@
-@import "tailwindcss";
-@tailwind utilities;
-
-@layer base {
-  :root {
-    color-scheme: light dark;
-  }
-  
-  body {
-    @apply text-gray-800 dark:text-gray-200 transition-colors duration-300;
-  }
+.bubble-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+  background-color: #ffeb3b;
+  color: #000;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  overflow: visible;
+  transition: box-shadow 0.3s ease-in-out;
 }
 
-@layer utilities {
-  .animate-fade-in {
-    animation: fadeIn 1s ease-in-out;
-  }
-  .animate-fade-in-delay-1 {
-    animation: fadeIn 1s ease-in-out 0.3s;
-    animation-fill-mode: both;
-  }
-  .animate-fade-in-delay-2 {
-    animation: fadeIn 1s ease-in-out 0.6s;
-    animation-fill-mode: both;
-  }
-  .animate-scroll-indicator {
-    animation: scrollIndicator 1.5s ease-in-out infinite;
-  }
-  .animate-loading-bar {
-    width: 30%;
-    animation: loadingBar 2s ease-in-out infinite;
-  }
+.bubble-button:hover {
+  box-shadow: 0 0 20px #ffeb3b, 0 0 30px #fff200aa;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* Base bubble style */
+.bubble {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: rgba(255, 235, 59, 0.7);
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+  /* Remove animation by default */
 }
 
-@keyframes scrollIndicator {
-  0%, 100% {
-    transform: translateY(0);
+/* Bubble positions (around border) */
+.top-left {
+  top: -6px;
+  left: 10px;
+}
+
+.top-right {
+  top: -6px;
+  right: 10px;
+}
+
+.bottom-left {
+  bottom: -6px;
+  left: 15px;
+}
+
+.bottom-right {
+  bottom: -6px;
+  right: 15px;
+}
+
+.center-left {
+  top: 50%;
+  left: -8px;
+  transform: translateY(-50%);
+}
+
+.center-right {
+  top: 50%;
+  right: -8px;
+  transform: translateY(-50%);
+}
+
+.top-center {
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.bottom-center {
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Show and animate on hover */
+.bubble-button:hover .bubble.top-left {
+  opacity: 1;
+  animation: bubble-burst 0.8s ease-out forwards;
+  animation-delay: 0s;
+}
+.bubble-button:hover .bubble.top-right {
+  opacity: 1;
+  animation: bubble-burst 0.8s ease-out forwards;
+  animation-delay: 0.1s;
+}
+.bubble-button:hover .bubble.bottom-left {
+  opacity: 1;
+  animation: bubble-burst 0.8s ease-out forwards;
+  animation-delay: 0.15s;
+}
+.bubble-button:hover .bubble.bottom-right {
+  opacity: 1;
+  animation: bubble-burst 0.8s ease-out forwards;
+  animation-delay: 0.2s;
+}
+.bubble-button:hover .bubble.center-left {
+  opacity: 1;
+  animation: bubble-burst 0.8s ease-out forwards;
+  animation-delay: 0.25s;
+}
+.bubble-button:hover .bubble.center-right {
+  opacity: 1;
+  animation: bubble-burst 0.8s ease-out forwards;
+  animation-delay: 0.3s;
+}
+.bubble-button:hover .bubble.top-center {
+  opacity: 1;
+  animation: bubble-burst 0.8s ease-out forwards;
+  animation-delay: 0.35s;
+}
+.bubble-button:hover .bubble.bottom-center {
+  opacity: 1;
+  animation: bubble-burst 0.8s ease-out forwards;
+  animation-delay: 0.4s;
+}
+
+@keyframes bubble-burst {
+  0% {
+    transform: scale(0.8) translateY(0);
+    opacity: 0.6;
   }
   50% {
-    transform: translateY(5px);
-  }
-}
-
-@keyframes loadingBar {
-  0% {
-    left: -30%;
+    transform: scale(1.2) translateY(-6px);
+    opacity: 1;
   }
   100% {
-    left: 100%;
+    transform: scale(1.4) translateY(-10px);
+    opacity: 0;
   }
 }
