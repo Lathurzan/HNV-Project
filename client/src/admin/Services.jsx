@@ -177,17 +177,35 @@ const AdminServicesPage = () => {
               />
             </div>
             <div>
-              <label className="block mb-2">Image URL</label>
+              <label className="block mb-2">Image</label>
               <input
-                type="text"
-                value={editingService ? editingService.image : newService.image}
-                onChange={(e) =>
-                  editingService
-                    ? setEditingService({ ...editingService, image: e.target.value })
-                    : setNewService({ ...newService, image: e.target.value })
-                }
+                type="file"
+                accept="image/*"
+                onChange={e => {
+                  const file = e.target.files[0];
+                  if (file) {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                      if (editingService) {
+                        setEditingService({ ...editingService, image: reader.result });
+                      } else {
+                        setNewService({ ...newService, image: reader.result });
+                      }
+                    };
+                    reader.readAsDataURL(file);
+                  }
+                }}
                 className="w-full border px-4 py-2 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
               />
+              {/* Show preview if image is selected */}
+              <div className="mt-2">
+                <img
+                  src={editingService ? editingService.image : newService.image}
+                  alt="Preview"
+                  className="w-20 h-20 object-cover rounded-md border"
+                  style={{ display: (editingService ? editingService.image : newService.image) ? 'block' : 'none' }}
+                />
+              </div>
             </div>
             <div className="md:col-span-2">
               <label className="block mb-2">Description</label>

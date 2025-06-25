@@ -1,31 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const Aboutpage = () => {
-  const [mission, setMission] = useState(
-    "At HNV Building, our mission is to shape environments that inspire, endure, and elevate lives..."
-  );
+  const [mission, setMission] = useState("");
+  const [story, setStory] = useState("");
+  const [features, setFeatures] = useState([]);
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
+  const [buttonState, setButtonState] = useState("default");
 
-  const [story, setStory] = useState(
-    "At HNV Building, we combine passion, precision, and professionalism to bring your vision to life..."
-  );
-
-  const [features, setFeatures] = useState([
-    {
-      title: "Expert Craftsmanship",
-      description:
-        "HNV Building blends passion and expertise for top-notch domestic and commercial projects.",
-    },
-    {
-      title: "Innovative Solutions",
-      description:
-        "We go beyond construction, bringing dreams to life by enhancing both residential and commercial environments.",
-    },
-    {
-      title: "Built to Last",
-      description:
-        "Our commitment is clear – delivering construction excellence that stands out and stands strong.",
-    },
-  ]);
+  useEffect(() => {
+    const fetchAbout = async () => {
+      setError("");
+      try {
+        const res = await fetch("http://localhost:5000/api/about");
+        if (!res.ok) throw new Error("Failed to fetch about page data");
+        const data = await res.json();
+        setMission(data.mission || "");
+        setStory(data.story || "");
+        setFeatures(Array.isArray(data.features) ? data.features : []);
+      } catch (err) {
+        setError("Could not load about page data.");
+      }
+    };
+    fetchAbout();
+  }, []);
 
   const handleFeatureChange = (index, field, value) => {
     const updated = [...features];
@@ -33,78 +31,121 @@ const Aboutpage = () => {
     setFeatures(updated);
   };
 
-  const handleUpdate = () => {
-    alert("Content updated successfully!");
-    // Future: send updated content to backend (e.g., via fetch or axios)
+  const handleUpdate = async () => {
+    setSuccess("");
+    setError("");
+    try {
+      const res = await fetch("http://localhost:5000/api/about", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mission, story, features }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setSuccess("✅ Content updated successfully!");
+        setButtonState("saved");
+        setTimeout(() => setButtonState("default"), 5000);
+      } else {
+        setError(data.message || "Failed to update content");
+      }
+    } catch (err) {
+      setError("Server error. Please try again.");
+    }
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
-      <h2 className="text-3xl font-bold mb-6 text-gray-800 dark:text-white">
-        About Us Page 
+    <div className="max-w-3xl w-full mx-auto p-4 sm:p-8 md:p-12 bg-white dark:bg-gray-950 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-800 mt-10 mb-16">
+      <h2 className="text-4xl font-bold mb-6 text-gray-800 dark:text-white text-center">
+        📝 About Us Editor
       </h2>
 
+      {/* Feedback Messages */}
+      {success && (
+        <p className="text-green-700 bg-green-100 dark:bg-green-800 dark:text-green-300 border-l-4 border-green-500 px-4 py-3 mb-4 rounded shadow-sm animate-pulse">
+          {success}
+        </p>
+      )}
+      {error && (
+        <p className="text-red-600 bg-red-100 dark:bg-red-800 dark:text-red-300 border-l-4 border-red-500 px-4 py-3 mb-4 rounded shadow-sm">
+          {error}
+        </p>
+      )}
+
       {/* Mission Section */}
-      <div className="mb-8">
-        <h3 className="text-lg font-semibold mb-2 text-gray-700 dark:text-gray-200">
-          Mission Statement
+      <section className="mb-10">
+        <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-200 mb-2">
+          🎯 Mission Statement
         </h3>
         <textarea
           value={mission}
           onChange={(e) => setMission(e.target.value)}
           rows={6}
-          className="w-full border border-gray-300 dark:border-gray-600 rounded-md p-3 text-sm bg-white dark:bg-gray-800 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+          placeholder="Enter your mission here..."
+          className="w-full resize-none border border-gray-300 dark:border-gray-600 rounded-lg p-4 text-sm bg-white dark:bg-gray-900 text-gray-800 dark:text-white shadow-sm focus:ring-2 focus:ring-yellow-400"
         />
-      </div>
+      </section>
 
       {/* Story Section */}
-      <div className="mb-8">
-        <h3 className="text-lg font-semibold mb-2 text-gray-700 dark:text-gray-200">
-          Story Section
+      <section className="mb-10">
+        <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-200 mb-2">
+          📖 Our Story
         </h3>
         <textarea
           value={story}
           onChange={(e) => setStory(e.target.value)}
           rows={6}
-          className="w-full border border-gray-300 dark:border-gray-600 rounded-md p-3 text-sm bg-white dark:bg-gray-800 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+          placeholder="Share your brand story..."
+          className="w-full resize-none border border-gray-300 dark:border-gray-600 rounded-lg p-4 text-sm bg-white dark:bg-gray-900 text-gray-800 dark:text-white shadow-sm focus:ring-2 focus:ring-yellow-400"
         />
-      </div>
+      </section>
 
       {/* Features Section */}
-      <div>
-        <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-200">
-          Feature Highlights
+      <section className="mb-12">
+        <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-200 mb-4">
+          💡 Feature Highlights
         </h3>
-        {features.map((feature, index) => (
-          <div
-            key={index}
-            className="mb-4 border border-gray-300 dark:border-gray-600 p-4 rounded-md bg-gray-50 dark:bg-gray-800"
-          >
-            <input
-              type="text"
-              value={feature.title}
-              onChange={(e) => handleFeatureChange(index, "title", e.target.value)}
-              placeholder="Feature Title"
-              className="w-full mb-2 p-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-700 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-            />
-            <textarea
-              value={feature.description}
-              onChange={(e) => handleFeatureChange(index, "description", e.target.value)}
-              rows={3}
-              placeholder="Feature Description"
-              className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-700 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-            />
-          </div>
-        ))}
-      </div>
+        <div className="space-y-6">
+          {features.map((feature, index) => (
+            <div
+              key={index}
+              className="p-4 border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 rounded-lg shadow"
+            >
+              <input
+                type="text"
+                value={feature.title}
+                onChange={(e) =>
+                  handleFeatureChange(index, "title", e.target.value)
+                }
+                placeholder="Feature Title"
+                className="w-full mb-2 p-3 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-800 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+              />
+              <textarea
+                value={feature.description}
+                onChange={(e) =>
+                  handleFeatureChange(index, "description", e.target.value)
+                }
+                rows={3}
+                placeholder="Feature Description"
+                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-800 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+              />
+            </div>
+          ))}
+        </div>
+      </section>
 
       {/* Update Button */}
-      <button
-        onClick={handleUpdate}
-        className="mt-6 bg-yellow-600 hover:bg-yellow-700 text-white font-semibold px-6 py-2 rounded-md transition"
-      >
-        Save Changes
-      </button>
+      <div className="text-center">
+        <button
+          onClick={handleUpdate}
+          className={`inline-block px-8 py-3 text-white font-semibold rounded-lg transition-all duration-300 ${
+            buttonState === "saved"
+              ? "bg-green-600 hover:bg-green-700"
+              : "bg-yellow-600 hover:bg-yellow-700"
+          } shadow-md`}
+        >
+          {buttonState === "saved" ? "✅ Saved" : "💾 Save Changes"}
+        </button>
+      </div>
     </div>
   );
 };

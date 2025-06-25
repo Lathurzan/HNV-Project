@@ -12,6 +12,7 @@ import AboutPage from '../admin/aboutpage';
 import AdminPortfolio from '../admin/AdminPortfolio';
 import AdminSectors from '../admin/AdminSectors';
 import AdminRegister from '../admin/AdminRegister/adminRegister';
+import ChangePassword from '../admin/ChangePassword'; 
 
 const Admin = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -213,6 +214,7 @@ const Admin = () => {
                     <Route path="/settings" element={<SettingsComponent />} />
                     <Route path="/adminportfolio" element={<AdminPortfolio />} />
                     <Route path="/adminsectors" element={<AdminSectors />} />
+                    <Route path="/change-password" element={<ChangePassword />} />
                   </Routes>
                 </main>
               </div>

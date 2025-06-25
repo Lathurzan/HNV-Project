@@ -1,50 +1,67 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Pencil, Trash2, PlusCircle } from 'lucide-react';
-
-const initialProjects = [
-  {
-    title: "Modern Home Renovation",
-    category: "Home / Renovation",
-    image: "http://hnvbuilding.co.uk/wp/wp-content/uploads/2020/08/WhatsApp-Image-2024-04-17-at-12.41.00-PM.jpeg",
-  },
-  {
-    title: "Garden Landscaping Design",
-    category: "Garden / Landscaping",
-    image: "http://hnvbuilding.co.uk/wp/wp-content/uploads/2024/05/WhatsApp-Image-2024-04-17-at-12.40.35-PM.jpeg",
-  },
-  {
-    title: "Luxury Kitchen Installation",
-    category: "Interior / Kitchen",
-    image: "http://hnvbuilding.co.uk/wp/wp-content/uploads/2020/08/WhatsApp-Image-2024-04-17-at-12.41.01-PM-1.jpeg",
-  },
-];
+import axios from 'axios';
 
 const AdminPortfolio = () => {
-  const [projects, setProjects] = useState(initialProjects);
+  const [projects, setProjects] = useState([]);
   const [newProject, setNewProject] = useState({
     title: '',
     category: '',
     image: '',
   });
   const [editIndex, setEditIndex] = useState(null);
+  const [alert, setAlert] = useState('');
+
+  useEffect(() => {
+    // Fetch projects from backend
+    const fetchProjects = async () => {
+      try {
+        const res = await axios.get('/api/projects');
+        setProjects(res.data);
+      } catch (err) {
+        setAlert('Failed to load projects');
+      }
+    };
+    fetchProjects();
+  }, []);
+
+  useEffect(() => {
+    if (alert) {
+      const timer = setTimeout(() => setAlert(''), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [alert]);
 
   const handleInputChange = (e) => {
     setNewProject({ ...newProject, [e.target.name]: e.target.value });
   };
 
-  const handleAddOrUpdate = () => {
+  const handleAddOrUpdate = async () => {
     if (!newProject.title || !newProject.category || !newProject.image) return;
-
     if (editIndex !== null) {
-      const updated = [...projects];
-      updated[editIndex] = newProject;
-      setProjects(updated);
-      setEditIndex(null);
+      // Update project in backend
+      const project = projects[editIndex];
+      try {
+        await axios.put(`/api/projects/${project._id}`, newProject);
+        const updated = [...projects];
+        updated[editIndex] = { ...newProject, _id: project._id };
+        setProjects(updated);
+        setEditIndex(null);
+        setNewProject({ title: '', category: '', image: '' });
+        setAlert('Project updated successfully');
+      } catch (err) {
+        setAlert('Failed to update project');
+      }
     } else {
-      setProjects([...projects, newProject]);
+      try {
+        const res = await axios.post('/api/projects', newProject);
+        setProjects([...projects, { ...newProject, _id: res.data.projectId }]);
+        setNewProject({ title: '', category: '', image: '' });
+        setAlert('Project added successfully');
+      } catch (err) {
+        setAlert('Failed to add project');
+      }
     }
-
-    setNewProject({ title: '', category: '', image: '' });
   };
 
   const handleEdit = (index) => {
@@ -52,14 +69,27 @@ const AdminPortfolio = () => {
     setEditIndex(index);
   };
 
-  const handleDelete = (index) => {
-    const updated = projects.filter((_, i) => i !== index);
-    setProjects(updated);
+  const handleDelete = async (index) => {
+    const project = projects[index];
+    if (!project || !project._id) return;
+    try {
+      await axios.delete(`/api/projects/${project._id}`);
+      setProjects(projects.filter((_, i) => i !== index));
+      setAlert('Project deleted successfully');
+    } catch (err) {
+      setAlert('Failed to delete project');
+    }
   };
 
   return (
     <div className="max-w-6xl mx-auto p-6">
       <h2 className="text-3xl font-bold mb-4 text-gray-800 dark:text-white">Manage Portfolio</h2>
+
+      {alert && (
+        <div className="mb-4 p-3 rounded bg-yellow-100 text-yellow-800">
+          {alert}
+        </div>
+      )}
 
       {/* Form */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -79,14 +109,31 @@ const AdminPortfolio = () => {
           onChange={handleInputChange}
           className="border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-800 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
         />
-        <input
-          type="text"
-          name="image"
-          placeholder="Image URL"
-          value={newProject.image}
-          onChange={handleInputChange}
-          className="border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-800 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
-        />
+        <div>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={e => {
+              const file = e.target.files[0];
+              if (file) {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                  setNewProject(prev => ({ ...prev, image: reader.result }));
+                };
+                reader.readAsDataURL(file);
+              }
+            }}
+            className="border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-800 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 w-full"
+          />
+          {/* Preview selected image */}
+          {newProject.image && (
+            <img
+              src={newProject.image}
+              alt="Preview"
+              className="w-24 h-16 object-cover rounded mt-2 border"
+            />
+          )}
+        </div>
       </div>
       <button
         onClick={handleAddOrUpdate}

@@ -113,7 +113,7 @@ const adminRegister = async (req, res) => {
     const result = await adminCollection.insertOne({ username, password: hashedPassword });
 
     if (result.insertedId) {
-      delete OTP_CACHE[username];
+      if (OTP_CACHE[username]) delete OTP_CACHE[username];
       return res.status(201).json({ message: 'Admin registered successfully' });
     } else {
       return res.status(500).json({ message: 'Failed to register admin' });
@@ -179,17 +179,25 @@ const changeAdminPassword = async (req, res) => {
     const db = await getDB();
     const adminCollection = db.collection('adminUser');
 
-    // 1. Check if admin with username and oldPassword exists
-    const admin = await adminCollection.findOne({ username, password: oldPassword });
-
+    // Find admin by username
+    const admin = await adminCollection.findOne({ username });
     if (!admin) {
       return res.status(401).json({ message: 'Old password is incorrect' });
     }
 
-    // 2. Update password
+    // Compare old password with hash
+    const isMatch = await bcrypt.compare(oldPassword, admin.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Old password is incorrect' });
+    }
+
+    // Hash new password
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update password
     const result = await adminCollection.updateOne(
       { username },
-      { $set: { password: newPassword } }
+      { $set: { password: hashedNewPassword } }
     );
 
     if (result.modifiedCount === 1) {

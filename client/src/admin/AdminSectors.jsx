@@ -1,24 +1,100 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Pencil, Trash2, PlusCircle } from 'lucide-react';
 
 const AdminSectors = () => {
   const [sectors, setSectors] = useState([]);
   const [newSector, setNewSector] = useState({ title: '', desc: '', img: '' });
   const [editIndex, setEditIndex] = useState(null);
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchSectors = async () => {
+      try {
+        const res = await fetch('http://localhost:5000/api/sectors');
+        const data = await res.json();
+        if (res.ok) {
+          setSectors(data);
+        }
+      } catch (err) {
+        // Optionally handle error
+      }
+    };
+    fetchSectors();
+  }, []);
 
   const handleChange = (e) => {
-    setNewSector({ ...newSector, [e.target.name]: e.target.value });
+    if (e.target.name === 'img' && e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const reader = new window.FileReader();
+      reader.onloadend = () => {
+        setNewSector({ ...newSector, img: reader.result });
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setNewSector({ ...newSector, [e.target.name]: e.target.value });
+    }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    setSuccess("");
+    setError("");
     if (!newSector.title || !newSector.desc || !newSector.img) return;
     if (editIndex !== null) {
-      const updated = [...sectors];
-      updated[editIndex] = newSector;
-      setSectors(updated);
+      // Update sector in backend
+      try {
+        const sectorId = sectors[editIndex]._id;
+        const res = await fetch(`http://localhost:5000/api/sectors/${sectorId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newSector),
+        });
+        if (res.status === 413) {
+          alert("Image or data too large. Please upload a smaller image.");
+          // Prevent further processing and console errors
+          return;
+        }
+        let data = {};
+        if (res.headers.get('content-type')?.includes('application/json')) {
+          data = await res.json();
+        }
+        if (res.ok) {
+          const updated = [...sectors];
+          updated[editIndex] = { ...newSector, _id: sectorId };
+          setSectors(updated);
+          setSuccess("Sector updated successfully!");
+        } else {
+          setError(data.message || "Failed to update sector");
+        }
+      } catch (err) {
+        setError("Server error. Please try again.");
+      }
       setEditIndex(null);
     } else {
-      setSectors([...sectors, newSector]);
+      try {
+        const res = await fetch("http://localhost:5000/api/sectors", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newSector),
+        });
+        if (res.status === 413) {
+          alert("Image or data too large. Please upload a smaller image.");
+          // Prevent further processing and console errors
+          return;
+        }
+        let data = {};
+        if (res.headers.get('content-type')?.includes('application/json')) {
+          data = await res.json();
+        }
+        if (res.ok) {
+          setSectors([...sectors, { ...newSector, _id: data.id }]);
+          setSuccess("Sector added successfully!");
+        } else {
+          setError(data.message || "Failed to add sector");
+        }
+      } catch (err) {
+        setError("Server error. Please try again.");
+      }
     }
     setNewSector({ title: '', desc: '', img: '' });
   };
@@ -28,9 +104,31 @@ const AdminSectors = () => {
     setNewSector(sectors[index]);
   };
 
-  const handleDelete = (index) => {
-    const updated = sectors.filter((_, i) => i !== index);
-    setSectors(updated);
+  const handleDelete = async (index) => {
+    setSuccess("");
+    setError("");
+    const sectorId = sectors[index]._id;
+    try {
+      const res = await fetch(`http://localhost:5000/api/sectors/${sectorId}`, {
+        method: "DELETE"
+      });
+      let data = {};
+      try {
+        data = await res.json();
+      } catch (jsonErr) {
+        // If response is not JSON, fallback
+        data = { message: 'Server error. Please try again.' };
+      }
+      if (res.ok) {
+        const updated = sectors.filter((_, i) => i !== index);
+        setSectors(updated);
+        setSuccess("Sector deleted successfully!");
+      } else {
+        setError(data.message || "Failed to delete sector");
+      }
+    } catch (err) {
+      setError("Server error. Please try again.");
+    }
   };
 
   return (
@@ -55,13 +153,25 @@ const AdminSectors = () => {
         />
         <input
           name="img"
-          placeholder="Image URL"
-          value={newSector.img}
+          type="file"
+          accept="image/*"
           onChange={handleChange}
           className="border border-gray-300 dark:border-gray-600 p-3 rounded bg-white dark:bg-gray-800 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400"
         />
+        {newSector.img && (
+          <img
+            src={newSector.img}
+            alt="Preview"
+            className="w-full h-32 object-cover rounded mt-2 border border-gray-200 dark:border-gray-700"
+          />
+        )}
       </div>
-
+      {success && (
+        <p className="text-green-600 bg-green-100 dark:bg-green-900 p-2 rounded text-center mb-4 text-sm">{success}</p>
+      )}
+      {error && (
+        <p className="text-red-500 bg-red-100 dark:bg-red-900 p-2 rounded text-center mb-4 text-sm">{error}</p>
+      )}
       <button
         onClick={handleSubmit}
         className="flex items-center gap-2 bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded shadow transition-all duration-200"

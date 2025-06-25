@@ -21,6 +21,7 @@ const getSectors = async (req, res) => {
 const addSector = async (req, res) => {
   try {
     const { title, desc, img } = req.body;
+
     if (!title || !desc || !img) {
       return res.status(400).json({ message: 'All fields are required' });
     }
@@ -30,10 +31,14 @@ const addSector = async (req, res) => {
 
     res.status(201).json({ message: 'Sector added', id: result.insertedId });
   } catch (err) {
-    console.error('Add error:', err);
-    res.status(500).json({ message: 'Server error' });
+    // Only handle validation/unexpected errors here. 413 is handled globally in server.js
+    // console.error('Unexpected error:', err);
+    res.status(400).json({
+      message: 'Unable to add sector. Please check your data or try a smaller image.'
+    });
   }
 };
+
 
 const updateSector = async (req, res) => {
   try {

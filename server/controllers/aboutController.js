@@ -1,4 +1,5 @@
 const { connectDB } = require('../config/db');
+const About = require("../models/aboutModel");
 
 let dbPromise = null;
 function getDB() {
@@ -37,14 +38,11 @@ const saveAboutPage = async (req, res) => {
 // Get About Page content
 const getAboutPage = async (req, res) => {
   try {
-    const db = await getDB();
-    const content = await db.collection('aboutPage').findOne({ _id: "about-content" });
-
-    if (!content) {
+    const about = await About.findOne({});
+    if (!about) {
       return res.status(404).json({ message: "No about page data found" });
     }
-
-    res.json(content);
+    res.json(about);
   } catch (err) {
     console.error("Fetch error:", err);
     res.status(500).json({ message: "Server error" });

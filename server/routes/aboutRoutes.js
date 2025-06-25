@@ -1,8 +1,8 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { saveAboutPage, getAboutPage } = require('../controllers/aboutController');
+const { getAboutPage, saveAboutPage } = require("../controllers/aboutController");
 
-router.get('/', getAboutPage);
-router.post('/', saveAboutPage);
+router.get("/", getAboutPage);
+router.post("/", saveAboutPage);
 
 module.exports = router;

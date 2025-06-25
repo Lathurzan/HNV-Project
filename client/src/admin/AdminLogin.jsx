@@ -8,6 +8,9 @@ const ADMIN_EMAIL = 'admin@example.com'; // TODO: Replace with your allowed admi
 const AdminLogin = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [otp, setOtp] = useState('');
+  const [showOtp, setShowOtp] = useState(false);
+  const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const googleDivRef = useRef(null);
@@ -71,18 +74,43 @@ const AdminLogin = () => {
   // Handle classic login
   const handleLogin = async () => {
     setError('');
+    setSuccess('');
+    if (!username || !password) {
+      setError('Username and password are required');
+      return;
+    }
     try {
-      const response = await fetch('http://localhost:5000/api/admin/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
-      });
-      const data = await response.json();
-      if (response.ok && data.auth) {
-        localStorage.setItem('admin-auth', 'true');
-        navigate('/admin');
+      // If username is an email, handle OTP flow
+      if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(username)) {
+        const res = await fetch('http://localhost:5000/api/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password, otp: showOtp ? otp : undefined }),
+        });
+        const data = await res.json();
+        if (res.ok && data.auth) {
+          localStorage.setItem('admin-auth', 'true');
+          navigate('/admin');
+        } else if (data.message && data.message.includes('OTP')) {
+          setShowOtp(true);
+          setSuccess(data.message);
+        } else {
+          setError(data.message || 'Invalid credentials');
+        }
       } else {
-        setError(data.message || 'Invalid credentials');
+        // Normal username login
+        const response = await fetch('http://localhost:5000/api/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password }),
+        });
+        const data = await response.json();
+        if (response.ok && data.auth) {
+          localStorage.setItem('admin-auth', 'true');
+          navigate('/admin');
+        } else {
+          setError(data.message || 'Invalid credentials');
+        }
       }
     } catch (err) {
       setError('Login failed. Try again.');
@@ -98,10 +126,15 @@ const AdminLogin = () => {
             {error}
           </p>
         )}
+        {success && (
+          <p className="text-green-600 bg-green-100 dark:bg-green-900 p-2 rounded text-center mb-4 text-sm">
+            {success}
+          </p>
+        )}
         <div className="space-y-4">
           <input
             type="text"
-            placeholder="Username"
+            placeholder="Username or Email"
             className="w-full p-3 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
@@ -113,11 +146,20 @@ const AdminLogin = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+          {showOtp && (
+            <input
+              type="text"
+              placeholder="Enter OTP"
+              className="w-full p-3 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+            />
+          )}
           <button
             onClick={handleLogin}
             className="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-3 rounded-lg font-semibold transition-colors duration-200"
           >
-            Login
+            {showOtp ? 'Verify OTP & Login' : 'Login'}
           </button>
           <div className="flex items-center justify-center mt-4">
             <div ref={googleDivRef} id="googleSignInDiv"></div>
