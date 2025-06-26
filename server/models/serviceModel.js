@@ -5,6 +5,6 @@ const serviceSchema = new mongoose.Schema({
   description: { type: String, required: true },
   image: { type: String, required: true },
   active: { type: Boolean, default: true }
-}, { timestamps: true });
+}, { timestamps: true, collection: 'services' }); // Explicitly set collection name
 
 module.exports = mongoose.model('Service', serviceSchema);

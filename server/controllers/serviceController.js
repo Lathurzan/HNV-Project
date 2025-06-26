@@ -1,12 +1,17 @@
-const connectMongoose = require('../config/mongoose');
-connectMongoose();
+const { connectDB } = require('../config/db');
+const { ObjectId } = require('mongodb');
 
-const Service = require('../models/serviceModel');
+let dbPromise;
+function getDB() {
+  if (!dbPromise) dbPromise = connectDB();
+  return dbPromise;
+}
 
 // GET all services
 exports.getAllServices = async (req, res) => {
   try {
-    const services = await Service.find();
+    const db = await getDB();
+    const services = await db.collection('services').find().toArray();
     res.status(200).json(services);
   } catch (err) {
     res.status(500).json({ message: 'Failed to fetch services' });
@@ -20,10 +25,17 @@ exports.addService = async (req, res) => {
     if (!title || !description || !image) {
       return res.status(400).json({ message: 'All fields are required' });
     }
-
-    const newService = new Service({ title, description, image, active });
-    await newService.save();
-    res.status(201).json({ message: 'Service added successfully', service: newService });
+    const db = await getDB();
+    const doc = {
+      title,
+      description,
+      image,
+      active: active !== undefined ? active : true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    const result = await db.collection('services').insertOne(doc);
+    res.status(201).json({ message: 'Service added successfully', service: { ...doc, _id: result.insertedId } });
   } catch (err) {
     res.status(500).json({ message: 'Failed to add service' });
   }
@@ -33,9 +45,17 @@ exports.addService = async (req, res) => {
 exports.updateService = async (req, res) => {
   try {
     const { id } = req.params;
-    const updated = await Service.findByIdAndUpdate(id, req.body, { new: true });
-    if (!updated) return res.status(404).json({ message: 'Service not found' });
-    res.status(200).json({ message: 'Service updated successfully', service: updated });
+    const db = await getDB();
+    const update = { ...req.body, updatedAt: new Date() };
+    const result = await db.collection('services').updateOne(
+      { _id: new ObjectId(id) },
+      { $set: update }
+    );
+    if (result.modifiedCount === 1) {
+      res.status(200).json({ message: 'Service updated successfully' });
+    } else {
+      res.status(404).json({ message: 'Service not found or unchanged' });
+    }
   } catch (err) {
     res.status(500).json({ message: 'Failed to update service' });
   }
@@ -45,9 +65,13 @@ exports.updateService = async (req, res) => {
 exports.deleteService = async (req, res) => {
   try {
     const { id } = req.params;
-    const deleted = await Service.findByIdAndDelete(id);
-    if (!deleted) return res.status(404).json({ message: 'Service not found' });
-    res.status(200).json({ message: 'Service deleted successfully' });
+    const db = await getDB();
+    const result = await db.collection('services').deleteOne({ _id: new ObjectId(id) });
+    if (result.deletedCount === 1) {
+      res.status(200).json({ message: 'Service deleted successfully' });
+    } else {
+      res.status(404).json({ message: 'Service not found' });
+    }
   } catch (err) {
     res.status(500).json({ message: 'Failed to delete service' });
   }
@@ -57,12 +81,14 @@ exports.deleteService = async (req, res) => {
 exports.toggleServiceActive = async (req, res) => {
   try {
     const { id } = req.params;
-    const service = await Service.findById(id);
+    const db = await getDB();
+    const service = await db.collection('services').findOne({ _id: new ObjectId(id) });
     if (!service) return res.status(404).json({ message: 'Service not found' });
-
-    service.active = !service.active;
-    await service.save();
-    res.status(200).json({ message: 'Service status updated', service });
+    const updated = await db.collection('services').updateOne(
+      { _id: new ObjectId(id) },
+      { $set: { active: !service.active, updatedAt: new Date() } }
+    );
+    res.status(200).json({ message: 'Service status updated' });
   } catch (err) {
     res.status(500).json({ message: 'Failed to toggle status' });
   }

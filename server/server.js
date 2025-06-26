@@ -28,6 +28,16 @@ app.use('/api/projects', require('./routes/projectRoutes'));
 app.use('/api/sectors', require('./routes/sectorRoutes'));
 app.use('/api/settings', require('./routes/settingsRoutes'));
 app.use('/api/services', require('./routes/serviceRoutes'));
+app.use("/api/testimonials", require("./routes/testimonialRoutes"));
+
+
+const Testimonial = require("./models/testimonialModel");
+
+app.get("/debug/all-testimonials", async (req, res) => {
+  const data = await Testimonial.find();
+  console.log("📦 Testimonials in DB:", data);
+  res.json(data);
+});
 
 // Connect to MongoDB using Mongoose before starting the server
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/HNV';

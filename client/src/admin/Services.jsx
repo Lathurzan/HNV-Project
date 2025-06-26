@@ -1,46 +1,8 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Edit, Trash, Plus, X, Check, AlertCircle } from 'lucide-react';
 
-const initialServices = [
-  {
-    id: 1,
-    title: "Plastering & Rendering",
-    description:
-      "Enhance your space with flawless plastering and durable rendering. From interiors to exteriors, our craftsmanship stands the test of time.",
-    image:
-      "https://storage.googleapis.com/a1aa/image/efbf0c15-80c0-4a4f-7785-6bc23367fcd4.jpg",
-    active: true,
-  },
-  {
-    id: 2,
-    title: "Small work services",
-    description:
-      "Count on us for reliable small repairs and improvements. From carpentry to home maintenance, we handle tasks efficiently.",
-    image:
-      "https://storage.googleapis.com/a1aa/image/d6ad48b9-5781-4259-9703-be15577f409e.jpg",
-    active: true,
-  },
-  {
-    id: 3,
-    title: "Bathroom Fitting",
-    description:
-      "Transform your bathroom into a modern, functional space with our expert fitting services.",
-    image: "https://storage.googleapis.com/a1aa/image/sample-bathroom.jpg",
-    active: true,
-  },
-  {
-    id: 4,
-    title: "Gardening & Landscaping",
-    description:
-      "Beautify your outdoors with our professional gardening and landscaping solutions.",
-    image: "https://storage.googleapis.com/a1aa/image/sample-garden.jpg",
-    active: true,
-  },
-];
-
 const AdminServicesPage = () => {
-  const [services, setServices] = useState(initialServices);
+  const [services, setServices] = useState([]);
   const [editingService, setEditingService] = useState(null);
   const [isAdding, setIsAdding] = useState(false);
   const [newService, setNewService] = useState({
@@ -52,14 +14,38 @@ const AdminServicesPage = () => {
   const [alertMessage, setAlertMessage] = useState('');
   const [alertType, setAlertType] = useState('');
 
+  useEffect(() => {
+    fetchServices();
+  }, []);
+
+  const fetchServices = async () => {
+    try {
+      const res = await fetch('/api/services');
+      const data = await res.json();
+      if (res.ok) setServices(data);
+      else showAlert('Failed to fetch services.', 'error');
+    } catch {
+      showAlert('Failed to fetch services.', 'error');
+    }
+  };
+
   const handleEdit = (service) => {
     setEditingService({ ...service });
     setIsAdding(false);
   };
 
-  const handleDelete = (id) => {
-    setServices(services.filter((service) => service.id !== id));
-    showAlert('Service deleted successfully.', 'success');
+  const handleDelete = async (id) => {
+    try {
+      const res = await fetch(`/api/services/${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        setServices(services.filter((service) => service._id !== id));
+        showAlert('Service deleted successfully.', 'success');
+      } else {
+        showAlert('Failed to delete service.', 'error');
+      }
+    } catch {
+      showAlert('Failed to delete service.', 'error');
+    }
   };
 
   const handleAddNew = () => {
@@ -68,35 +54,62 @@ const AdminServicesPage = () => {
     setNewService({ title: '', description: '', image: '', active: true });
   };
 
-  const handleSaveEdit = () => {
+  const handleSaveEdit = async () => {
     if (editingService) {
-      setServices(
-        services.map((service) =>
-          service.id === editingService.id ? editingService : service
-        )
-      );
-      setEditingService(null);
-      showAlert('Service updated successfully.', 'success');
+      try {
+        const res = await fetch(`/api/services/${editingService._id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(editingService),
+        });
+        if (res.ok) {
+          await fetchServices();
+          setEditingService(null);
+          showAlert('Service updated successfully.', 'success');
+        } else {
+          showAlert('Failed to update service.', 'error');
+        }
+      } catch {
+        showAlert('Failed to update service.', 'error');
+      }
     }
   };
 
-  const handleSaveNew = () => {
+  const handleSaveNew = async () => {
     if (!newService.title || !newService.description || !newService.image) {
       showAlert('Please fill all required fields.', 'error');
       return;
     }
-    const newId = Math.max(...services.map((s) => s.id), 0) + 1;
-    setServices([...services, { ...newService, id: newId }]);
-    setIsAdding(false);
-    showAlert('Service added successfully.', 'success');
+    try {
+      const response = await fetch('/api/services', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newService),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setServices([...services, data.service]);
+        setIsAdding(false);
+        showAlert('Service added successfully.', 'success');
+      } else {
+        showAlert(data.message || 'Failed to add service.', 'error');
+      }
+    } catch (error) {
+      showAlert('Failed to add service.', 'error');
+    }
   };
 
-  const handleToggleActive = (id) => {
-    setServices(
-      services.map((service) =>
-        service.id === id ? { ...service, active: !service.active } : service
-      )
-    );
+  const handleToggleActive = async (id) => {
+    try {
+      const res = await fetch(`/api/services/${id}/toggle`, { method: 'PATCH' });
+      if (res.ok) {
+        await fetchServices();
+      } else {
+        showAlert('Failed to toggle status.', 'error');
+      }
+    } catch {
+      showAlert('Failed to toggle status.', 'error');
+    }
   };
 
   const showAlert = (message, type) => {
