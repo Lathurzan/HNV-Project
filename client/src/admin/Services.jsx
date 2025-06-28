@@ -291,7 +291,7 @@ const AdminServicesPage = () => {
           </thead>
           <tbody>
             {services.map((service) => (
-              <tr key={service.id} className="border-t border-gray-200 dark:border-gray-700">
+              <tr key={service._id} className="border-t border-gray-200 dark:border-gray-700">
                 <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-gray-100 flex items-center">
                   <img
                     src={service.image}
@@ -305,7 +305,7 @@ const AdminServicesPage = () => {
                 </td>
                 <td className="px-6 py-4">
                   <button
-                    onClick={() => handleToggleActive(service.id)}
+                    onClick={() => handleToggleActive(service._id)}
                     className={`px-3 py-1 rounded-full text-xs font-medium ${
                       service.active
                         ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-400'
@@ -323,7 +323,7 @@ const AdminServicesPage = () => {
                     <Edit className="w-5 h-5" />
                   </button>
                   <button
-                    onClick={() => handleDelete(service.id)}
+                    onClick={() => handleDelete(service._id)}
                     className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-600"
                   >
                     <Trash className="w-5 h-5" />

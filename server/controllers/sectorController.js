@@ -18,6 +18,20 @@ const getSectors = async (req, res) => {
   }
 };
 
+
+
+
+const getSectorCount = async (req, res) => {
+  try {
+    const db = await getDB();
+    const count = await db.collection('sectors').countDocuments();
+    res.status(200).json({ count });
+  } catch (err) {
+    console.error('Count error:', err);
+    res.status(500).json({ message: 'Failed to get sector count' });
+  }
+};
+
 const addSector = async (req, res) => {
   try {
     const { title, desc, img } = req.body;
@@ -84,5 +98,6 @@ module.exports = {
   getSectors,
   addSector,
   updateSector,
-  deleteSector
+  deleteSector,
+  getSectorCount
 };

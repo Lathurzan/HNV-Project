@@ -67,6 +67,36 @@ exports.deleteTestimonial = async (req, res) => {
   }
 };
 
+// ✅ GET last 3 testimonials (latest first)
+exports.getRecentTestimonials = async (req, res) => {
+  try {
+    const db = await getDB();
+    const testimonials = await db
+      .collection("testimonial")
+      .find({ hidden: false }) // only show visible ones
+      .sort({ createdAt: -1 }) // newest first
+      .limit(3)
+      .toArray();
+
+    res.status(200).json(testimonials);
+  } catch (err) {
+    console.error("❌ Fetch error:", err);
+    res.status(500).json({ message: "Failed to fetch testimonials", error: err.message });
+  }
+};
+
+// ✅ GET testimonial count
+exports.getTestimonialCount = async (req, res) => {
+  try {
+    const db = await getDB();
+    const count = await db.collection('testimonial').countDocuments();
+    res.status(200).json({ count });
+  } catch (err) {
+    console.error('Count Error:', err);
+    res.status(500).json({ message: 'Failed to get testimonial count' });
+  }
+};
+
 // ✅ PATCH toggle visibility
 exports.toggleVisibility = async (req, res) => {
   try {

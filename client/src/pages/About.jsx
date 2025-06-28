@@ -1,31 +1,35 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-
-const features = [
-  {
-    icon: "fas fa-industry",
-    title: "Expert Craftsmanship",
-    description:
-      "HNV Building blends passion and expertise for top-notch domestic and commercial projects.",
-  },
-  {
-    icon: "fas fa-broadcast-tower",
-    title: "Innovative Solutions",
-    description:
-      "We go beyond construction, bringing dreams to life by enhancing both residential and commercial environments.",
-  },
-  {
-    icon: "fas fa-battery-full",
-    title: "Built to Last",
-    description:
-      "At HNV Building, our commitment is clear – delivering construction excellence that stands out and stands strong.",
-  },
-];
+import HNV from "../assets/HNV.jpg";
+import axios from "axios";
 
 const AboutUs2 = () => {
+  const [about, setAbout] = useState(null);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     window.scrollTo(0, 0);
+    const fetchAboutPage = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/about");
+        setAbout(response.data);
+      } catch (error) {
+        console.error("Error fetching about data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAboutPage();
   }, []);
+
+  if (loading) {
+    return <div className="text-center py-10">Loading...</div>;
+  }
+
+  if (!about) {
+    return <div className="text-center py-10 text-red-600">Failed to load content.</div>;
+  }
 
   return (
     <motion.div
@@ -38,7 +42,7 @@ const AboutUs2 = () => {
       {/* Hero Section */}
       <section className="relative w-full">
         <img
-          src="https://storage.googleapis.com/a1aa/image/fbb29ad4-80dd-4b41-4eed-7a597ad03f05.jpg"
+          src={HNV}
           alt="Modern industrial building"
           className="w-full h-[400px] object-cover brightness-50"
         />
@@ -50,43 +54,14 @@ const AboutUs2 = () => {
         </div>
       </section>
 
-      {/* Icon Grid */}
+      {/* Features Grid */}
       <section className="flex flex-wrap w-full">
-        {[
-          {
-            icon: "fas fa-hard-hat",
-            title: "Reliable Teamwork",
-            description: "Our skilled professionals work together seamlessly to bring your vision to life.",
-            bg: "bg-black",
-            textColor: "text-white",
-          },
-          {
-            icon: "fas fa-tools",
-            title: "Quality Tools & Methods",
-            description: "We use high-grade tools and proven techniques to ensure durable, lasting builds.",
-            bg: "bg-gray-900",
-            textColor: "text-white",
-          },
-          {
-            icon: "fas fa-leaf",
-            title: "Eco-Friendly Focus",
-            description: "Committed to green building solutions that are safe for both people and the planet.",
-            bg: "bg-[#dcb25a]",
-            textColor: "text-black",
-          },
-          {
-            icon: "fas fa-shield-alt",
-            title: "Safety First",
-            description: "Safety is at the heart of everything we do — for our team, clients, and projects.",
-            bg: "bg-[#c99f44]",
-            textColor: "text-black",
-          },
-        ].map((item, index) => (
+        {about.features.map((item, index) => (
           <div
             key={index}
-            className={`w-1/2 md:w-1/4 ${item.bg} ${item.textColor} p-8 flex flex-col items-center text-center`}
+            className={`w-1/2 md:w-1/4 ${index % 2 === 0 ? "bg-black text-white" : "bg-[#dcb25a] text-black"} p-8 flex flex-col items-center text-center`}
           >
-            <i className={`${item.icon} fa-lg mb-4`}></i>
+            <i className={`fas fa-star fa-lg mb-4`}></i>
             <h3 className="font-bold text-sm mb-2">{item.title}</h3>
             <p className="text-xs leading-tight max-w-[220px]">{item.description}</p>
           </div>
@@ -95,21 +70,14 @@ const AboutUs2 = () => {
 
       {/* Story Section */}
       <section className="flex flex-col md:flex-row font-[Inter,sans-serif] shadow-md mx-4 md:mx-10 lg:mx-16 xl:mx-24 my-12">
-        {/* Left Side */}
+        {/* Left */}
         <div className="bg-gray-100 flex flex-col justify-center px-8 py-16 md:w-1/2">
           <h2 className="text-gray-900 font-semibold text-xl mb-6 max-w-md leading-tight">
             Building Dreams, Creating Spaces:<br />
             Your Trusted Construction Partner
           </h2>
           <p className="text-gray-600 text-sm mb-6 max-w-md leading-relaxed">
-            At HNV Building, we combine passion, precision, and professionalism to bring your vision to life.
-            Whether it's a cozy home or a large-scale commercial project, our mission is to build spaces that reflect quality,
-            functionality, and enduring value.
-          </p>
-          <p className="text-gray-600 text-sm mb-10 max-w-md leading-relaxed">
-            With a strong foundation in craftsmanship and a commitment to excellence, we tailor every project to your needs —
-            ensuring timely delivery, transparent communication, and results that exceed expectations.
-            From planning to finishing touches, we’re with you every step of the way.
+            {about.story}
           </p>
           <button
             type="button"
@@ -119,7 +87,7 @@ const AboutUs2 = () => {
           </button>
         </div>
 
-        {/* Right Side */}
+        {/* Right */}
         <div className="relative md:w-1/2">
           <img
             src="https://storage.googleapis.com/a1aa/image/a99521d2-e88d-401b-aa55-16a482176c7f.jpg"
@@ -127,9 +95,9 @@ const AboutUs2 = () => {
             className="w-full h-full object-cover brightness-[0.3]"
           />
           <div className="absolute inset-0 flex flex-col justify-center px-10 py-16 space-y-10 text-white max-w-lg">
-            {features.map((item, index) => (
+            {about.features.map((item, index) => (
               <div className="flex space-x-6" key={index}>
-                <i className={`${item.icon} text-yellow-500 text-3xl flex-shrink-0`} />
+                <i className="fas fa-check text-yellow-500 text-3xl flex-shrink-0" />
                 <div>
                   <h3 className="font-bold text-sm mb-2">{item.title}</h3>
                   <p className="text-xs leading-relaxed">{item.description}</p>
@@ -140,23 +108,15 @@ const AboutUs2 = () => {
         </div>
       </section>
 
-      {/* Bottom Section */}
-      <section className="flex flex-col md:flex-row mt-24 px-10 md:px-20 lg:px-28 xl:px-32 max-w-7xl mx-auto">
+      {/* Mission Section */}
+      <section className="flex flex-col md:flex-row mt-24 px-10 md:px-20 lg:px-28 xl:px-32 max-w-7xl mx-auto mb-16">
         <div className="md:w-1/3">
           <h3 className="font-semibold text-gray-900 text-lg md:text-xl leading-tight max-w-xs border-b-2 border-[#c9973f] pb-1">
             Our Mission
           </h3>
         </div>
         <div className="md:w-2/3 mt-6 md:mt-0 text-sm md:text-base leading-relaxed text-gray-600 max-w-4xl">
-          At HNV Building, our mission is to shape environments that inspire, endure, and elevate lives.
-          We are committed to delivering exceptional construction solutions through craftsmanship, innovation,
-          and a deep understanding of our clients’ needs.
-          <br /><br />
-          Every project is more than just bricks and mortar — it’s a promise to build lasting value,
-          create meaningful spaces, and foster relationships rooted in trust, transparency, and excellence.
-          <br /><br />
-          Whether residential or commercial, we aim to set the benchmark for quality and customer satisfaction
-          in every structure we bring to life.
+          {about.mission}
         </div>
       </section>
     </motion.div>

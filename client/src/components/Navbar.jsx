@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import Logo from "../assets/Logo.png"; 
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -12,9 +13,9 @@ const Navbar = () => {
           <div className="flex items-center">
             <Link to="/">
               <img
-                src="/assest/HNV2.png"
+                src={Logo}
                 alt="HNV Logo"
-                className="h-14 w-auto"
+                className="h-26 w-auto"
               />
             </Link>
           </div>

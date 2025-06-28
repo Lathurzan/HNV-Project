@@ -77,10 +77,44 @@ const InfoCard = ({ icon: Icon, label, value, bgColor, iconColor }) => {
 };
 
 const Dashboard = () => {
-  const stats = {
-    services: 42,
-    testimonials: 15,
-    marketSectors: 8,
+  const [serviceCount, setServiceCount] = useState(0);
+  const [testimonialCount, setTestimonialCount] = useState(0);
+  const [sectorCount, setSectorCount] = useState(0);
+
+  useEffect(() => {
+    fetchServiceCount();
+    fetchTestimonialCount();
+    fetchSectorCount();
+  }, []);
+
+  const fetchServiceCount = async () => {
+    try {
+      const res = await fetch('/api/services/count');
+      const data = await res.json();
+      if (res.ok) setServiceCount(data.count);
+    } catch {
+      setServiceCount(0);
+    }
+  };
+
+  const fetchTestimonialCount = async () => {
+    try {
+      const res = await fetch('/api/testimonials/count');
+      const data = await res.json();
+      if (res.ok) setTestimonialCount(data.count);
+    } catch {
+      setTestimonialCount(0);
+    }
+  };
+
+  const fetchSectorCount = async () => {
+    try {
+      const res = await fetch('/api/sectors/count');
+      const data = await res.json();
+      if (res.ok) setSectorCount(data.count);
+    } catch {
+      setSectorCount(0);
+    }
   };
 
   return (
@@ -103,26 +137,25 @@ const Dashboard = () => {
         <InfoCard
           icon={Briefcase}
           label="Services Added"
-          value={stats.services}
+          value={serviceCount}
           bgColor="#E0F2FE"
           iconColor="#0284C7"
         />
         <InfoCard
           icon={MessageCircle}
           label="Testimonials"
-          value={stats.testimonials}
+          value={testimonialCount}
           bgColor="#DCFCE7"
           iconColor="#16A34A"
         />
         <InfoCard
           icon={Globe}
           label="Market Sectors"
-          value={stats.marketSectors}
+          value={sectorCount}
           bgColor="#FEF3C7"
           iconColor="#CA8A04"
         />
         {/* Add a placeholder card or more stats here if needed */}
-       
       </div>
     </div>
   );

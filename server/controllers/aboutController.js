@@ -18,13 +18,16 @@ const saveAboutPage = async (req, res) => {
       return res.status(400).json({ message: "Invalid about page data" });
     }
 
+    // Limit features to first 4 items only
+    const trimmedFeatures = features.slice(0, 4);
+
     const db = await getDB();
     const collection = db.collection('aboutPage');
 
     // Upsert (update if exists, otherwise insert)
     const result = await collection.updateOne(
       { _id: "about-content" }, // static ID for single-page data
-      { $set: { mission, story, features } },
+      { $set: { mission, story, features: trimmedFeatures } },
       { upsert: true }
     );
 

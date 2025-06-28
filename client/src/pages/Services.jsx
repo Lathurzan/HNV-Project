@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
+import HNV from "../assets/HNV.jpg"
 
 const ServicesPage = () => {
   const serviceList = [
@@ -101,7 +102,7 @@ const ServicesPage = () => {
       {/* Hero Section */}
       <section className="relative w-full">
         <img
-          src="https://storage.googleapis.com/a1aa/image/fbb29ad4-80dd-4b41-4eed-7a597ad03f05.jpg"
+          src={HNV} // Changed to use the imported image
           alt="Services hero"
           className="w-full h-[400px] object-cover brightness-50"
         />

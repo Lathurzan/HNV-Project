@@ -1,18 +1,115 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FaQuoteLeft } from "react-icons/fa";
 import HeroSection from "../components/HeroSection";
 import { motion } from "framer-motion";
+import HNV from "../assets/HNV.jpg"
+import TestimonialsSection from "../components/TestimonialSlider";
 
 const Home = () => {
+  // Market Sectors state and fetch
+  const [sectors, setSectors] = useState([]);
+  const [sectorsLoading, setSectorsLoading] = useState(true);
+  const [sectorsError, setSectorsError] = useState(null);
+
+  useEffect(() => {
+    setSectorsLoading(true);
+    setSectorsError(null);
+    fetch("/api/sectors")
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch sectors");
+        return res.json();
+      })
+      .then((data) => {
+        setSectors(data);
+        setSectorsLoading(false);
+      })
+      .catch((err) => {
+        setSectorsError(err.message || "Error loading sectors");
+        setSectorsLoading(false);
+      });
+  }, []);
+
+  // TestimonialsSection: fetches and displays the last testimonial from backend
+  const TestimonialsSection = () => {
+    const [testimonials, setTestimonials] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+      setLoading(true);
+      setError(null);
+      fetch("/api/testimonials/recent")
+        .then((res) => {
+          if (!res.ok) throw new Error("Failed to fetch testimonials");
+          return res.json();
+        })
+        .then((data) => {
+          if (Array.isArray(data) && data.length > 0) {
+            setTestimonials(data); // Store all 3 testimonials
+          } else {
+            setTestimonials([]);
+          }
+          setLoading(false);
+        })
+        .catch((err) => {
+          setError(err.message || "Error loading testimonials");
+          setLoading(false);
+        });
+    }, []);
+
+    if (loading) {
+      return <div className="text-center text-gray-300 py-8">Loading testimonials...</div>;
+    }
+    if (error) {
+      return <div className="text-center text-red-400 py-8">{error}</div>;
+    }
+    if (!testimonials.length) {
+      return <div className="text-center text-gray-400 py-8">No testimonials found.</div>;
+    }
+
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+        {testimonials.map((testimonial, idx) => (
+          <div
+            key={testimonial._id || idx}
+            className="bg-white/20 backdrop-blur-lg p-8 rounded-2xl shadow-lg hover:bg-white/30 transition-all duration-300 flex flex-col items-center"
+          >
+            <FaQuoteLeft className="text-yellow-300 text-2xl mb-4" />
+            <p className="text-white text-base leading-relaxed mb-6 text-center">
+              {testimonial.quote}
+            </p>
+            <div className="flex items-center mt-auto">
+              <img
+                src={testimonial.image || "https://via.placeholder.com/56x56?text=No+Image"}
+                alt={testimonial.name}
+                onError={e => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/56x56?text=No+Image"; }}
+                className="w-14 h-14 rounded-full border-2 border-yellow-300"
+              />
+              <div className="ml-4">
+                <h4 className="text-yellow-300 font-semibold text-lg">
+                  {testimonial.name}
+                </h4>
+                <p className="text-white/90 text-sm">{testimonial.position}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   return (
     <div className="bg-gray-50">
       {/* Hero Section */}
       <motion.div
+        style={{ backgroundImage: `url(${HNV})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1 }}
       >
         <HeroSection />
+  
+
       </motion.div>
 
       {/* Features Section */}
@@ -146,62 +243,8 @@ const Home = () => {
             <div className="w-24 border-b-4 border-yellow-300 mx-auto" />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            {[
-              {
-                quote:
-                  "HNV Building has consistently delivered exceptional quality in their construction projects. Their attention to detail and commitment to timelines is remarkable.",
-                author: "Janet Joles",
-                position: "Purchasing Officer",
-                company: "TechCorp Industries",
-                image:
-                  "https://storage.googleapis.com/a1aa/image/739d10e4-3e39-4f36-c44c-48f9028bffa4.jpg",
-              },
-              {
-                quote:
-                  "Working with HNV has been a game-changer for our automotive manufacturing needs. Their precision and reliability are unmatched in the industry.",
-                author: "Michael Chen",
-                position: "Production Director",
-                company: "AutoTech Solutions",
-                image:
-                  "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-              },
-              {
-                quote:
-                  "The team at HNV consistently demonstrates professionalism and expertise. Their innovative solutions have helped us achieve our construction goals.",
-                author: "Sarah Williams",
-                position: "Project Manager",
-                company: "BuildPro International",
-                image:
-                  "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-              },
-            ].map((testimonial, index) => (
-              <motion.div
-                key={index}
-                className="bg-white/20 backdrop-blur-lg p-8 rounded-2xl shadow-lg hover:bg-white/30 transition-all duration-300 flex flex-col items-center"
-                whileHover={{ scale: 1.04 }}
-              >
-                <FaQuoteLeft className="text-yellow-300 text-2xl mb-4" />
-                <p className="text-white text-base leading-relaxed mb-6 text-center">
-                  {testimonial.quote}
-                </p>
-                <div className="flex items-center mt-auto">
-                  <img
-                    src={testimonial.image}
-                    alt={testimonial.author}
-                    className="w-14 h-14 rounded-full border-2 border-yellow-300"
-                  />
-                  <div className="ml-4">
-                    <h4 className="text-yellow-300 font-semibold text-lg">
-                      {testimonial.author}
-                    </h4>
-                    <p className="text-white/90 text-sm">{testimonial.position}</p>
-                    <p className="text-white/70 text-xs">{testimonial.company}</p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+          {/* Fetch and show the last testimonial from backend */}
+          <TestimonialsSection />
         </div>
       </motion.section>
 
@@ -220,56 +263,31 @@ const Home = () => {
           <div className="w-24 h-1 bg-yellow-500 rounded-full" />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-          {[
-            {
-              title: "Home Renovation",
-              desc: `Complete home transformation including walls, roofing, tiling, plumbing, and flooring.`,
-              img: "https://www.letsbemates.com.au/includes/assets/img/webp/uploads/2018/05/9-Creative-home-renovation-tips-for-a-tight-budget.webp",
-            },
-            {
-              title: "Kitchen & Bathroom",
-              desc: `Modular kitchen setups, customized bathrooms, tiling, fittings, and waterproofing.`,
-              img: "https://csgrenovation.ca/wp-content/uploads/2019/07/Small-kitchen.webp",
-            },
-            {
-              title: "Interior Design",
-              desc: `Custom-built shelves, wardrobes, lighting design, and aesthetic room finishing.`,
-              img: "https://www.studying-in-uk.org/wp-content/uploads/2019/11/interior-design-in-United-Kingdom.jpg",
-            },
-            {
-              title: "Landscaping & Gardening",
-              desc: `Design and build outdoor spaces, garden beds, paving, and water features.`,
-              img: "https://cdn.mos.cms.futurecdn.net/HSyM83jpV8YCNyzRScEaNm-1600-80.jpg.webp",
-            },
-            {
-              title: "Outdoor Structures",
-              desc: `Fencing, pergolas, decks, patios, and custom outdoor enclosures.`,
-              img: "https://www.forestgarden.co.uk/wp-content/uploads/2025/02/AMALFIA_1-scaled-e1740584369585.jpg",
-            },
-            {
-              title: "Maintenance & Repairs",
-              desc: `General handyman services, painting, electrical, plumbing, and minor fix-ups.`,
-              img: "https://neuroject.com/wp-content/uploads/2023/11/Building-Maintenance-Comprehensive-Guide-2023-Neuroject-01.jpg",
-            },
-          ].map((sector, index) => (
-            <motion.div
-              key={index}
-              whileHover={{ scale: 1.04 }}
-              className="group hover:shadow-2xl transition-all rounded-2xl overflow-hidden bg-white p-5 border border-gray-100 flex flex-col items-center"
-            >
-              <img
-                src={sector.img}
-                alt={sector.title}
-                className="w-full h-40 object-cover rounded-xl mb-4 transition-transform duration-300 group-hover:scale-105"
-              />
-              <h4 className="text-lg font-semibold text-gray-800 mb-2 text-center">
-                {sector.title}
-              </h4>
-              <p className="text-sm text-gray-600 leading-tight text-center">{sector.desc}</p>
-            </motion.div>
-          ))}
-        </div>
+        {sectorsLoading ? (
+          <div className="text-center text-gray-500 py-8">Loading sectors...</div>
+        ) : sectorsError ? (
+          <div className="text-center text-red-500 py-8">{sectorsError}</div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+            {sectors.map((sector, index) => (
+              <motion.div
+                key={sector._id || index}
+                whileHover={{ scale: 1.04 }}
+                className="group hover:shadow-2xl transition-all rounded-2xl overflow-hidden bg-white p-5 border border-gray-100 flex flex-col items-center"
+              >
+                <img
+                  src={sector.img}
+                  alt={sector.title}
+                  className="w-full h-40 object-cover rounded-xl mb-4 transition-transform duration-300 group-hover:scale-105"
+                />
+                <h4 className="text-lg font-semibold text-gray-800 mb-2 text-center">
+                  {sector.title}
+                </h4>
+                <p className="text-sm text-gray-600 leading-tight text-center">{sector.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        )}
       </motion.section>
     </div>
   );
