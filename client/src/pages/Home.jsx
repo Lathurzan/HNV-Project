@@ -278,6 +278,7 @@ const Home = () => {
                 <img
                   src={sector.img}
                   alt={sector.title}
+                  onError={e => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/400x250?text=No+Image"; }}
                   className="w-full h-40 object-cover rounded-xl mb-4 transition-transform duration-300 group-hover:scale-105"
                 />
                 <h4 className="text-lg font-semibold text-gray-800 mb-2 text-center">
