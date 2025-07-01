@@ -1,23 +1,26 @@
 import React, { useEffect, useState } from "react";
+import Hero1 from "../assets/Hero1.jpg";
+import Hero2 from "../assets/Hero2.jpg";
+import Hero3 from "../assets/Hero3.jpg";
 
 const heroImages = [
   {
     title1: "Welcome to",
-    url: "https://storage.googleapis.com/a1aa/image/747ce6c2-264e-4dbe-0564-92e405909364.jpg",
+    url: Hero1,
     title: "Quality Home Construction",
     subtitle:
       "From extensions to renovations, we turn your ideas into reality with your satisfaction as our top priority.",
   },
   {
     title1: "Welcome to",
-    url: "https://storage.googleapis.com/a1aa/image/1bb37e28-894c-4388-c1ca-fe58f69a50f3.jpg",
+    url: Hero2,
     title: "Smart Commercial Builds",
     subtitle:
       "We create business spaces that reflect your brand and boost productivity.",
   },
   {
     title1: "Welcome to",
-    url: "https://as1.ftcdn.net/v2/jpg/02/09/46/68/1000_F_209466807_vIEKPahlcztZ2hAYVe3pUryp0lqdqoNc.jpg",
+    url: Hero3,
     title: "Expert Renovation Services",
     subtitle:
       "Revamp your property with functional and aesthetic upgrades tailored to your vision.",
@@ -49,9 +52,13 @@ const HeroSection = () => {
       <img
         src={url}
         alt="Hero Background"
-        className="w-full h-full object-cover absolute inset-0"
+        className="w-full h-full object-cover absolute inset-0 z-0"
+        onError={(e) => {
+          e.target.onerror = null;
+          e.target.src = "https://via.placeholder.com/1200x600?text=No+Image";
+        }}
       />
-      <div className="absolute inset-0 bg-black bg-opacity-60 flex items-center">
+      <div className="absolute inset-0 flex items-center z-10">
         <div className="max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 w-full">
           <div className="max-w-3xl text-left">
             <h1 className="text-white font-normal text-[40px] sm:text-[30px] leading-tight">
@@ -75,14 +82,14 @@ const HeroSection = () => {
 
       <button
         onClick={handlePrev}
-        className="absolute top-1/2 left-4 transform -translate-y-1/2 text-white text-4xl focus:outline-none"
+        className="absolute top-1/2 left-4 transform -translate-y-1/2 text-white text-4xl"
         aria-label="Previous Slide"
       >
         ❮
       </button>
       <button
         onClick={handleNext}
-        className="absolute top-1/2 right-4 transform -translate-y-1/2 text-white text-4xl focus:outline-none"
+        className="absolute top-1/2 right-4 transform -translate-y-1/2 text-white text-4xl"
         aria-label="Next Slide"
       >
         ❯

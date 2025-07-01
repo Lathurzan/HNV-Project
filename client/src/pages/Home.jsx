@@ -3,7 +3,7 @@ import { FaQuoteLeft } from "react-icons/fa";
 import HeroSection from "../components/HeroSection";
 import { motion } from "framer-motion";
 import HNV from "../assets/HNV.jpg"
-import TestimonialsSection from "../components/TestimonialSlider";
+
 
 const Home = () => {
   // Market Sectors state and fetch
@@ -78,19 +78,11 @@ const Home = () => {
             <p className="text-white text-base leading-relaxed mb-6 text-center">
               {testimonial.quote}
             </p>
-            <div className="flex items-center mt-auto">
-              <img
-                src={testimonial.image || "https://via.placeholder.com/56x56?text=No+Image"}
-                alt={testimonial.name}
-                onError={e => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/56x56?text=No+Image"; }}
-                className="w-14 h-14 rounded-full border-2 border-yellow-300"
-              />
-              <div className="ml-4">
-                <h4 className="text-yellow-300 font-semibold text-lg">
-                  {testimonial.name}
-                </h4>
-                <p className="text-white/90 text-sm">{testimonial.position}</p>
-              </div>
+            <div className="flex flex-col items-center mt-auto">
+              <h4 className="text-yellow-300 font-semibold text-lg">
+                {testimonial.name}
+              </h4>
+              <p className="text-white/90 text-sm">{testimonial.position}</p>
             </div>
           </div>
         ))}
@@ -101,16 +93,13 @@ const Home = () => {
   return (
     <div className="bg-gray-50">
       {/* Hero Section */}
-      <motion.div
-        style={{ backgroundImage: `url(${HNV})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
-        initial={{ opacity: 0, y: -50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1 }}
-      >
-        <HeroSection />
-  
-
-      </motion.div>
+     <motion.div
+  initial={{ opacity: 0, y: -50 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 1 }}
+>
+  <HeroSection />
+</motion.div>
 
       {/* Features Section */}
       <motion.section
