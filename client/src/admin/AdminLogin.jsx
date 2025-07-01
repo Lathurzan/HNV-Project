@@ -1,169 +1,145 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import * as jwtDecode from 'jwt-decode';
-
-const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID'; // TODO: Replace with your actual client ID
-const ADMIN_EMAIL = 'admin@example.com'; // TODO: Replace with your allowed admin email
+import React, { useState } from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../contexts/authContext';
+import { ChefHat, Lock, Mail, Eye, EyeOff, AlertCircle } from 'lucide-react';
 
 const AdminLogin = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [otp, setOtp] = useState('');
-  const [showOtp, setShowOtp] = useState(false);
-  const [success, setSuccess] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
-  const navigate = useNavigate();
-  const googleDivRef = useRef(null);
+  const { login, isAuthenticated, isLoading } = useAuth();
+  const location = useLocation();
 
-  // Handle Google login callback
-  const handleGoogleCallback = async (response) => {
-    try {
-      // Send credential to backend for verification
-      const res = await fetch('http://localhost:5000/api/admin/google-login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token: response.credential }),
-      });
-      const data = await res.json();
-      if (res.ok && data.auth && data.email === ADMIN_EMAIL) {
-        localStorage.setItem('admin-auth', 'true');
-        navigate('/admin');
-      } else {
-        setError(data.message || 'You are not authorized to access this panel');
-      }
-    } catch (err) {
-      setError('Google login failed. Try again.');
-    }
-  };
+  const from = location.state?.from?.pathname || '/admin';
 
-  // Load Google script and render button
-  useEffect(() => {
-    // Load script if not present
-    if (!window.google) {
-      const script = document.createElement('script');
-      script.src = 'https://accounts.google.com/gsi/client';
-      script.async = true;
-      script.defer = true;
-      script.onload = () => {
-        if (window.google && googleDivRef.current) {
-          window.google.accounts.id.initialize({
-            client_id: GOOGLE_CLIENT_ID,
-            callback: handleGoogleCallback,
-          });
-          window.google.accounts.id.renderButton(googleDivRef.current, {
-            theme: 'outline',
-            size: 'large',
-            type: 'standard',
-          });
-        }
-      };
-      document.body.appendChild(script);
-    } else if (window.google && googleDivRef.current) {
-      window.google.accounts.id.initialize({
-        client_id: GOOGLE_CLIENT_ID,
-        callback: handleGoogleCallback,
-      });
-      window.google.accounts.id.renderButton(googleDivRef.current, {
-        theme: 'outline',
-        size: 'large',
-        type: 'standard',
-      });
-    }
-  }, []);
+  if (isAuthenticated) {
+    return <Navigate to={from} replace />;
+  }
 
-  // Handle classic login
-  const handleLogin = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     setError('');
-    setSuccess('');
-    if (!username || !password) {
-      setError('Username and password are required');
+    
+    if (!email || !password) {
+      setError('Please fill in all fields');
       return;
     }
-    try {
-      // If username is an email, handle OTP flow
-      if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(username)) {
-        const res = await fetch('http://localhost:5000/api/admin/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password, otp: showOtp ? otp : undefined }),
-        });
-        const data = await res.json();
-        if (res.ok && data.auth) {
-          localStorage.setItem('admin-auth', 'true');
-          navigate('/admin');
-        } else if (data.message && data.message.includes('OTP')) {
-          setShowOtp(true);
-          setSuccess(data.message);
-        } else {
-          setError(data.message || 'Invalid credentials');
-        }
-      } else {
-        // Normal username login
-        const response = await fetch('http://localhost:5000/api/admin/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password }),
-        });
-        const data = await response.json();
-        if (response.ok && data.auth) {
-          localStorage.setItem('admin-auth', 'true');
-          navigate('/admin');
-        } else {
-          setError(data.message || 'Invalid credentials');
-        }
-      }
-    } catch (err) {
-      setError('Login failed. Try again.');
+
+    const success = await login(email, password);
+    if (!success) {
+      setError('Invalid email or password');
     }
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gradient-to-br from-gray-100 to-gray-300 dark:from-gray-900 dark:to-gray-800">
-      <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-sm">
-        <h2 className="text-3xl font-semibold text-center text-yellow-500 mb-6">Admin Login</h2>
-        {error && (
-          <p className="text-red-500 bg-red-100 dark:bg-red-900 p-2 rounded text-center mb-4 text-sm">
-            {error}
-          </p>
-        )}
-        {success && (
-          <p className="text-green-600 bg-green-100 dark:bg-green-900 p-2 rounded text-center mb-4 text-sm">
-            {success}
-          </p>
-        )}
-        <div className="space-y-4">
-          <input
-            type="text"
-            placeholder="Username or Email"
-            className="w-full p-3 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            className="w-full p-3 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          {showOtp && (
-            <input
-              type="text"
-              placeholder="Enter OTP"
-              className="w-full p-3 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value)}
-            />
-          )}
-          <button
-            onClick={handleLogin}
-            className="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-3 rounded-lg font-semibold transition-colors duration-200"
-          >
-            {showOtp ? 'Verify OTP & Login' : 'Login'}
-          </button>
-          <div className="flex items-center justify-center mt-4">
-            <div ref={googleDivRef} id="googleSignInDiv"></div>
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50 flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        {/* Logo Section */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-orange-500 to-red-500 rounded-full mb-4 shadow-lg">
+            <ChefHat className="w-8 h-8 text-white" />
           </div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Foodie Admin</h1>
+          <p className="text-gray-600">Sign in to manage your restaurant</p>
+        </div>
+
+        {/* Login Form */}
+        <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {error && (
+              <div className="flex items-center gap-2 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+                <AlertCircle className="w-5 h-5 flex-shrink-0" />
+                <span className="text-sm">{error}</span>
+              </div>
+            )}
+
+            {/* Demo Credentials Info */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <p className="text-sm text-blue-800 font-medium mb-2">Demo Credentials:</p>
+              <p className="text-xs text-blue-700">Email: admin@foodie.com</p>
+              <p className="text-xs text-blue-700">Password: admin123</p>
+            </div>
+
+            <div className="space-y-4">
+              {/* Email Field */}
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                  Email Address
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Mail className="w-5 h-5 text-gray-400" />
+                  </div>
+                  <input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white"
+                    placeholder="Enter your email"
+                    disabled={isLoading}
+                  />
+                </div>
+              </div>
+
+              {/* Password Field */}
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                  Password
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Lock className="w-5 h-5 text-gray-400" />
+                  </div>
+                  <input
+                    id="password"
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white"
+                    placeholder="Enter your password"
+                    disabled={isLoading}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    disabled={isLoading}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="w-5 h-5 text-gray-400 hover:text-gray-600" />
+                    ) : (
+                      <Eye className="w-5 h-5 text-gray-400 hover:text-gray-600" />
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Login Button */}
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 px-4 rounded-lg font-medium text-lg hover:from-orange-600 hover:to-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+            >
+              {isLoading ? (
+                <div className="flex items-center justify-center">
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                  Signing in...
+                </div>
+              ) : (
+                'Sign In'
+              )}
+            </button>
+          </form>
+        </div>
+
+        {/* Footer */}
+        <div className="text-center mt-8">
+          <p className="text-sm text-gray-500">
+            © 2025 Foodie Admin. All rights reserved.
+          </p>
         </div>
       </div>
     </div>

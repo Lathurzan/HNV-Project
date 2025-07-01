@@ -1,6 +1,8 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './contexts/authContext';
+
 
 // Public layout and pages
 import Layout from './components/Layout';
@@ -39,34 +41,36 @@ function App() {
   }
 
   return (
-    <Router>
-      <Routes>
-        {/* Admin login route using env variable, now URL-safe */}
-        <Route path={import.meta.env.VITE_ADMIN_PATH} element={<AdminLogin />} />
+    <AuthProvider>
+      <Router>
+        <Routes>
+          {/* Admin login route */}
+          <Route path="/admin-login" element={<AdminLogin />} />
 
-        {/* Protected admin routes */}
-        <Route
-          path="/admin/*"
-          element={
-            <AdminRoute>
-              <Admin />
-            </AdminRoute>
-          }
-        />
+          {/* Protected admin routes */}
+          <Route
+            path="/admin/*"
+            element={
+              <AdminRoute>
+                <Admin />
+              </AdminRoute>
+            }
+          />
 
-        {/* Public routes under layout */}
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
-          <Route path="services" element={<Services />} />
-          <Route path="portfolio" element={<Portfolio />} />
-          <Route path="about" element={<About />} />
-          <Route path="contact" element={<Contact />} />
+          {/* Public routes under layout */}
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Home />} />
+            <Route path="services" element={<Services />} />
+            <Route path="portfolio" element={<Portfolio />} />
+            <Route path="about" element={<About />} />
+            <Route path="contact" element={<Contact />} />
+            <Route path="*" element={<NotFound />} />
+          </Route>
+          {/* Catch-all NotFound for any other unmatched route */}
           <Route path="*" element={<NotFound />} />
-        </Route>
-        {/* Catch-all NotFound for any other unmatched route */}
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </Router>
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 

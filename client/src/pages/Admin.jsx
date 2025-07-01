@@ -2,6 +2,7 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import { Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
 import { Sun, Moon, Menu, X, Home, Settings, FileText, Users, Grid, LogOut } from 'lucide-react';
+import { useAuth } from '../contexts/authContext';
 
 // Admin components
 import Dashboard from '../admin/Dashboard';
@@ -18,6 +19,7 @@ const Admin = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
+  const { logout } = useAuth();
 
   useEffect(() => {
     document.title = 'Admin Dashboard - HNV Building';
@@ -36,7 +38,8 @@ const Admin = () => {
   };
 
   const handleLogout = () => {
-    navigate('/');
+    logout(); // clear auth state via context
+    navigate('/admin-login', { replace: true });
   };
 
   return (
@@ -207,14 +210,14 @@ const Admin = () => {
                 {/* Content */}
                 <main className="p-4 sm:p-6 md:p-8">
                   <Routes>
-                    <Route path="/" element={<Dashboard />} />
-                    <Route path="/services" element={<Services />} />
-                    <Route path="/aboutpage" element={<AboutPage />} />
-                    <Route path="/testimonials" element={<Testimonials />} />
-                    <Route path="/settings" element={<SettingsComponent />} />
-                    <Route path="/adminportfolio" element={<AdminPortfolio />} />
-                    <Route path="/adminsectors" element={<AdminSectors />} />
-                    <Route path="/change-password" element={<ChangePassword />} />
+                    <Route index element={<Dashboard />} />
+                    <Route path="services" element={<Services />} />
+                    <Route path="aboutpage" element={<AboutPage />} />
+                    <Route path="testimonials" element={<Testimonials />} />
+                    <Route path="settings" element={<SettingsComponent />} />
+                    <Route path="adminportfolio" element={<AdminPortfolio />} />
+                    <Route path="adminsectors" element={<AdminSectors />} />
+                    <Route path="change-password" element={<ChangePassword />} />
                   </Routes>
                 </main>
               </div>
