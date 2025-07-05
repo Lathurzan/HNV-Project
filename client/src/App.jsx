@@ -18,6 +18,9 @@ import Admin from './pages/Admin';
 import AdminLogin from './admin/AdminLogin';
 import AdminRoute from './admin/AdminRoute';
 
+// Rights management
+import Rights from './rights';
+
 function App() {
   const [loading, setLoading] = useState(true);
 
@@ -56,6 +59,9 @@ function App() {
               </AdminRoute>
             }
           />
+
+          {/* Rights management route */}
+          <Route path="/rights" element={<Rights />} />
 
           {/* Public routes under layout */}
           <Route path="/" element={<Layout />}>

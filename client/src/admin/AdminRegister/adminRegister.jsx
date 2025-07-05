@@ -1,92 +1,237 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../../App.css';
+import { ChefHat, Lock, Mail, Eye, EyeOff, AlertCircle } from 'lucide-react';
 
 const AdminRegister = () => {
+  const [step, setStep] = useState(1); // 1 = form, 2 = otp
   const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [otp, setOtp] = useState('');
   const [success, setSuccess] = useState('');
+  const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
 
-  const handleRegister = async () => {
+  const handleSendOTP = async () => {
     setError('');
     setSuccess('');
 
-    if (!username || !password) {
-      setError('Username and password are required');
+    if (!username || !email || !password || !confirmPassword) {
+      setError('All fields are required');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
       return;
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/admin/register', {
+      const res = await fetch('http://localhost:5000/api/admin/register', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: email, password }) // using email as username
       });
 
-      const data = await response.json();
+      const data = await res.json();
 
-      if (response.ok) {
+      if (res.ok && data.message.includes('OTP sent')) {
+        setSuccess('OTP sent to your email');
+        setStep(2);
+      } else if (!res.ok) {
+        setError(data.message);
+      }
+    } catch (err) {
+      console.error(err);
+      setError('Server error');
+    }
+  };
+
+  const handleVerifyOTP = async () => {
+    setError('');
+    setSuccess('');
+
+    if (!otp) {
+      setError('Enter the OTP sent to your email');
+      return;
+    }
+
+    try {
+      const res = await fetch('http://localhost:5000/api/admin/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: email, password, otp })
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
         setSuccess(data.message);
-        setUsername('');
-        setPassword('');
-        setTimeout(() => {
-          navigate('/admin/login/3gKjd92sfT0q');
-        }, 1500);
+        setTimeout(() => navigate('/admin-login'), 1500);
       } else {
         setError(data.message);
       }
     } catch (err) {
-      console.error('Registration error:', err);
-      setError('Something went wrong. Try again.');
+      console.error(err);
+      setError('Server error');
     }
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gradient-to-br from-gray-100 to-gray-300 dark:from-gray-900 dark:to-gray-800">
-      <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-sm">
-        <h2 className="text-3xl font-semibold text-center text-yellow-500 mb-6">Admin Register</h2>
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50 flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        {/* Logo Section */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-orange-500 to-red-500 rounded-full mb-4 shadow-lg">
+            <ChefHat className="w-8 h-8 text-white" />
+          </div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">HNV Admin</h1>
+          <p className="text-gray-600">Create your admin account</p>
+        </div>
 
-        {error && (
-          <p className="text-red-500 bg-red-100 dark:bg-red-900 p-2 rounded text-center mb-4 text-sm">
-            {error}
-          </p>
-        )}
-        {success && (
-          <p className="text-green-600 bg-green-100 dark:bg-green-900 p-2 rounded text-center mb-4 text-sm">
-            {success}
-          </p>
-        )}
+        <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+          {error && (
+            <div className="flex items-center gap-2 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 mb-4">
+              <AlertCircle className="w-5 h-5 flex-shrink-0" />
+              <span className="text-sm">{error}</span>
+            </div>
+          )}
+          {success && (
+            <div className="flex items-center gap-2 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700 mb-4">
+              <span className="text-sm">{success}</span>
+            </div>
+          )}
 
-        <div className="space-y-4">
-          <input
-            type="text"
-            placeholder="Username"
-            className="w-full p-3 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            className="w-full p-3 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <button onClick={handleRegister} className="bubble-button">
-            Register
-            <span className="bubble top-left"></span>
-            <span className="bubble top-right"></span>
-            <span className="bubble bottom-left"></span>
-            <span className="bubble bottom-right"></span>
-            <span className="bubble center-left"></span>
-            <span className="bubble center-right"></span>
-            <span className="bubble top-center"></span>
-            <span className="bubble bottom-center"></span>
-          </button>
+          <form className="space-y-6" onSubmit={e => e.preventDefault()}>
+            {step === 1 && (
+              <>
+                <div>
+                  <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">Username</label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Mail className="w-5 h-5 text-gray-400" />
+                    </div>
+                    <input
+                      id="username"
+                      type="text"
+                      value={username}
+                      onChange={e => setUsername(e.target.value)}
+                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white"
+                      placeholder="Enter your username"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Mail className="w-5 h-5 text-gray-400" />
+                    </div>
+                    <input
+                      id="email"
+                      type="email"
+                      value={email}
+                      onChange={e => setEmail(e.target.value)}
+                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white"
+                      placeholder="Enter your email"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Lock className="w-5 h-5 text-gray-400" />
+                    </div>
+                    <input
+                      id="password"
+                      type={showPassword ? 'text' : 'password'}
+                      value={password}
+                      onChange={e => setPassword(e.target.value)}
+                      className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white"
+                      placeholder="Enter your password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    >
+                      {showPassword ? (
+                        <EyeOff className="w-5 h-5 text-gray-400 hover:text-gray-600" />
+                      ) : (
+                        <Eye className="w-5 h-5 text-gray-400 hover:text-gray-600" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+                <div>
+                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Lock className="w-5 h-5 text-gray-400" />
+                    </div>
+                    <input
+                      id="confirmPassword"
+                      type={showConfirmPassword ? 'text' : 'password'}
+                      value={confirmPassword}
+                      onChange={e => setConfirmPassword(e.target.value)}
+                      className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white"
+                      placeholder="Confirm your password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOff className="w-5 h-5 text-gray-400 hover:text-gray-600" />
+                      ) : (
+                        <Eye className="w-5 h-5 text-gray-400 hover:text-gray-600" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleSendOTP}
+                  className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 px-4 rounded-lg font-medium text-lg hover:from-orange-600 hover:to-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl mt-2"
+                >
+                  Register
+                </button>
+              </>
+            )}
+            {step === 2 && (
+              <>
+                <div>
+                  <label htmlFor="otp" className="block text-sm font-medium text-gray-700 mb-2">Enter OTP</label>
+                  <input
+                    id="otp"
+                    type="text"
+                    value={otp}
+                    onChange={e => setOtp(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white"
+                    placeholder="Enter the OTP sent to your email"
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={handleVerifyOTP}
+                  className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 px-4 rounded-lg font-medium text-lg hover:from-orange-600 hover:to-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl mt-2"
+                >
+                  Verify & Register
+                </button>
+              </>
+            )}
+          </form>
+        </div>
+        {/* Footer */}
+        <div className="text-center mt-8">
+          <p className="text-sm text-gray-500">
+            © 2025 HNV Admin. All rights reserved.
+          </p>
         </div>
       </div>
     </div>

@@ -40,8 +40,8 @@ const AdminLogin = () => {
           <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-orange-500 to-red-500 rounded-full mb-4 shadow-lg">
             <ChefHat className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Foodie Admin</h1>
-          <p className="text-gray-600">Sign in to manage your restaurant</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">HNV Admin</h1>
+          <p className="text-gray-600">Sign in to manage your Details</p>
         </div>
 
         {/* Login Form */}
@@ -54,12 +54,12 @@ const AdminLogin = () => {
               </div>
             )}
 
-            {/* Demo Credentials Info */}
+            {/* Demo Credentials Info
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <p className="text-sm text-blue-800 font-medium mb-2">Demo Credentials:</p>
-              <p className="text-xs text-blue-700">Email: admin@foodie.com</p>
+              <p className="text-xs text-blue-700">Email: admin@hnv.com</p>
               <p className="text-xs text-blue-700">Password: admin123</p>
-            </div>
+            </div> */}
 
             <div className="space-y-4">
               {/* Email Field */}
@@ -138,7 +138,7 @@ const AdminLogin = () => {
         {/* Footer */}
         <div className="text-center mt-8">
           <p className="text-sm text-gray-500">
-            © 2025 Foodie Admin. All rights reserved.
+            © 2025 HNV Admin. All rights reserved.
           </p>
         </div>
       </div>

@@ -18,12 +18,17 @@ const Footer = () => {
       .catch(() => setSocialLinks({}));
   }, []);
 
+  // Helper to scroll to top on navigation
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <footer className="bg-[#191919] text-white py-12 text-sm">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 border-b border-gray-700">
         {/* Company Info */}
         <div>
-          <Link to="/" className="flex items-center mb-4">
+          <Link to="/" className="flex items-center mb-4" onClick={scrollToTop}>
             <HardHat className="h-6 w-6 text-yellow-500" />
             <span className="ml-2 text-lg font-bold text-white">HNV</span>
             <span className="ml-1 text-sm text-gray-400">Building</span>
@@ -55,10 +60,10 @@ const Footer = () => {
         <div>
           <h3 className="text-yellow-500 font-semibold mb-3 border-b border-gray-700 pb-2">Quick Links</h3>
           <ul className="space-y-2 text-gray-400">
-            <li><Link to="/" className="hover:text-yellow-500 transition">Home</Link></li>
-            <li><Link to="/services" className="hover:text-yellow-500 transition">Services</Link></li>
-            <li><Link to="/about" className="hover:text-yellow-500 transition">About Us</Link></li>
-            <li><Link to="/contact" className="hover:text-yellow-500 transition">Contact</Link></li>
+            <li><Link to="/" className="hover:text-yellow-500 transition" onClick={scrollToTop}>Home</Link></li>
+            <li><Link to="/services" className="hover:text-yellow-500 transition" onClick={scrollToTop}>Services</Link></li>
+            <li><Link to="/about" className="hover:text-yellow-500 transition" onClick={scrollToTop}>About Us</Link></li>
+            <li><Link to="/contact" className="hover:text-yellow-500 transition" onClick={scrollToTop}>Contact</Link></li>
           </ul>
         </div>
 
@@ -66,10 +71,10 @@ const Footer = () => {
         <div>
           <h3 className="text-yellow-500 font-semibold mb-3 border-b border-gray-700 pb-2">Our Services</h3>
           <ul className="space-y-2 text-gray-400">
-            <li><Link to="/services" className="hover:text-yellow-500 transition">Painting & Decorating</Link></li>
-            <li><Link to="/services" className="hover:text-yellow-500 transition">Bricklaying & Repointing</Link></li>
-            <li><Link to="/services" className="hover:text-yellow-500 transition">Gardening & Landscaping</Link></li>
-            <li><Link to="/services" className="hover:text-yellow-500 transition">Bathroom & Kitchen Fitting</Link></li>
+            <li><Link to="/services" className="hover:text-yellow-500 transition" onClick={scrollToTop}>Painting & Decorating</Link></li>
+            <li><Link to="/services" className="hover:text-yellow-500 transition" onClick={scrollToTop}>Bricklaying & Repointing</Link></li>
+            <li><Link to="/services" className="hover:text-yellow-500 transition" onClick={scrollToTop}>Gardening & Landscaping</Link></li>
+            <li><Link to="/services" className="hover:text-yellow-500 transition" onClick={scrollToTop}>Bathroom & Kitchen Fitting</Link></li>
           </ul>
         </div>
 
@@ -94,7 +99,8 @@ const Footer = () => {
       </div>
 
       <div className="text-center text-gray-500 text-xs mt-8">
-        &copy; {new Date().getFullYear()} HNV Building. All rights reserved.
+        &copy; {new Date().getFullYear()} HNV Building.
+        <span> <Link to="/rights" className="hover:text-yellow-500 transition" onClick={scrollToTop}>All rights reserved.</Link></span>
       </div>
     </footer>
   );

@@ -29,13 +29,42 @@ const AdminSettings = () => {
 
   const handleSettingsSubmit = async (e) => {
     e.preventDefault();
+    // Client-side validation for social URLs before sending to backend
+    const isValidSocialUrl = (url, domain) => {
+      if (!url) return true;
+      try {
+        const parsed = new URL(url);
+        return (
+          parsed.protocol === 'https:' &&
+          (parsed.hostname === domain || parsed.hostname === `www.${domain}`)
+        );
+      } catch {
+        return false;
+      }
+    };
+    if (!isValidSocialUrl(settings.facebookUrl, 'facebook.com')) {
+      showAlert('Facebook URL is invalid. Please enter a valid Facebook profile or page URL.', 'error');
+      setIsSubmitting(false);
+      return;
+    }
+    if (!isValidSocialUrl(settings.instagramUrl, 'instagram.com')) {
+      showAlert('Instagram URL is invalid. Please enter a valid Instagram profile URL.', 'error');
+      setIsSubmitting(false);
+      return;
+    }
+    if (!isValidSocialUrl(settings.twitterUrl, 'twitter.com')) {
+      showAlert('Twitter URL is invalid. Please enter a valid Twitter profile URL.', 'error');
+      setIsSubmitting(false);
+      return;
+    }
     setIsSubmitting(true);
     try {
       const res = await axios.post('/api/settings', settings);
       showAlert(res.data.message, 'success');
     } catch (err) {
       const errMsg = err.response?.data?.message || 'Unable to save settings';
-      showAlert(errMsg, 'error');
+      // Only log to console, do not show to user
+      console.error('Settings save error:', errMsg);
     } finally {
       setIsSubmitting(false);
     }

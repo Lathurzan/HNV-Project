@@ -73,9 +73,12 @@ const HeroSection = () => {
 
             <p className="text-white text-lg max-w-xl mt-4">{subtitle}</p>
 
-            <button className="mt-6 bg-yellow-400 text-black font-bold py-3 px-6 rounded hover:bg-yellow-500 transition">
+            <a
+              href="/Portfolio"
+              className="mt-6 bg-yellow-400 text-black font-bold py-3 px-6 rounded hover:bg-yellow-500 transition inline-block text-center shadow"
+            >
               Learn More
-            </button>
+            </a>
           </div>
         </div>
       </div>

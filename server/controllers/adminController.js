@@ -21,17 +21,19 @@ let OTP_CACHE = {};
 
 // Nodemailer transporter (replace with your email and app password)
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'mail.hnvbuilding.co.uk', 
+  port: 465,                      
+  secure: true,                  
   auth: {
-    user: 'subanlathu@gmail.com',         // your Gmail email
-    pass: 'loxx rhhb urhg odpk',          // your Gmail App Password
+    user: 'quotes@hnvbuilding.co.uk', 
+    pass: '2UNF$%D!!KK+&8pu',         
   },
 });
 
 // Send OTP email
 async function sendOTPEmail(toEmail, otpCode) {
   const mailOptions = {
-    from: '"Admin System" <subanlathu@gmail.com>',
+    from: '"Admin System" <quotes@hnvbuilding.co.uk>',
     to: toEmail,
     subject: 'Your OTP Code (Valid for 60 seconds)',
     text: `Your OTP code is: ${otpCode}. It will expire in 60 seconds.`,
