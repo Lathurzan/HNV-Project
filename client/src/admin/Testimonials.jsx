@@ -1,16 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, X, Check, AlertCircle, Star, Eye, EyeOff, Trash2 } from 'lucide-react';
+import { Check, AlertCircle, Star, Eye, EyeOff, Trash2 } from 'lucide-react';
 
 const Testimonials = () => {
   const [testimonials, setTestimonials] = useState([]);
-  const [isAdding, setIsAdding] = useState(false);
-  const [newTestimonial, setNewTestimonial] = useState({
-    name: '',
-    position: '',
-    image: '',
-    rating: 5,
-    quote: ''
-  });
   const [alertMessage, setAlertMessage] = useState('');
   const [alertType, setAlertType] = useState('');
   const [hiddenTestimonials, setHiddenTestimonials] = useState([]);
@@ -31,31 +23,6 @@ const Testimonials = () => {
       setTestimonials(data);
     } catch (err) {
       showAlert('Could not load testimonials.', 'error');
-    }
-  };
-
-  const handleAddNew = () => {
-    setIsAdding(true);
-  };
-
-  const handleSaveNew = async () => {
-    if (!newTestimonial.name || !newTestimonial.quote) {
-      showAlert('Please fill all required fields.', 'error');
-      return;
-    }
-    try {
-      const res = await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newTestimonial)
-      });
-      if (!res.ok) throw new Error('Failed to add testimonial');
-      showAlert('Testimonial added successfully.', 'success');
-      setIsAdding(false);
-      setNewTestimonial({ name: '', position: '', image: '', rating: 5, quote: '' });
-      fetchTestimonials();
-    } catch (err) {
-      showAlert('Failed to add testimonial.', 'error');
     }
   };
 
@@ -126,13 +93,6 @@ const Testimonials = () => {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Testimonials Management</h1>
           <p className="text-gray-600 dark:text-gray-400">Manage client testimonials</p>
         </div>
-        <button
-          onClick={handleAddNew}
-          className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-md flex items-center transition-colors duration-300"
-        >
-          <Plus className="h-5 w-5 mr-2" />
-          Add Testimonial
-        </button>
       </div>
       {/* Alert Message */}
       {alertMessage && (
@@ -147,78 +107,6 @@ const Testimonials = () => {
               <AlertCircle className="h-5 w-5 mr-2 flex-shrink-0" />
             )}
             <span>{alertMessage}</span>
-          </div>
-        </div>
-      )}
-      {/* Add New Form */}
-      {isAdding && (
-        <div className="mb-8 bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Add New Testimonial</h2>
-            <button
-              onClick={() => setIsAdding(false)}
-              className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-            >
-              <X className="h-5 w-5" />
-            </button>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-gray-700 dark:text-gray-300 mb-2">Name</label>
-              <input
-                type="text"
-                value={newTestimonial.name}
-                onChange={(e) => setNewTestimonial({ ...newTestimonial, name: e.target.value })}
-                className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-              />
-            </div>
-            <div>
-              <label className="block text-gray-700 dark:text-gray-300 mb-2">Position</label>
-              <input
-                type="text"
-                value={newTestimonial.position}
-                onChange={(e) => setNewTestimonial({ ...newTestimonial, position: e.target.value })}
-                className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-              />
-            </div>
-            <div>
-              <label className="block text-gray-700 dark:text-gray-300 mb-2">Image URL</label>
-              <input
-                type="text"
-                value={newTestimonial.image}
-                onChange={(e) => setNewTestimonial({ ...newTestimonial, image: e.target.value })}
-                className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-              />
-            </div>
-            <div>
-              <label className="block text-gray-700 dark:text-gray-300 mb-2">Rating</label>
-              {renderStarRating(newTestimonial.rating, true, (rating) =>
-                setNewTestimonial({ ...newTestimonial, rating })
-              )}
-            </div>
-            <div className="md:col-span-2">
-              <label className="block text-gray-700 dark:text-gray-300 mb-2">Testimonial</label>
-              <textarea
-                rows={4}
-                value={newTestimonial.quote}
-                onChange={(e) => setNewTestimonial({ ...newTestimonial, quote: e.target.value })}
-                className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-              ></textarea>
-            </div>
-          </div>
-          <div className="mt-6 flex justify-end">
-            <button
-              onClick={() => setIsAdding(false)}
-              className="bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 px-4 py-2 rounded-md mr-2 transition-colors duration-300"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleSaveNew}
-              className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-md transition-colors duration-300"
-            >
-              Add Testimonial
-            </button>
           </div>
         </div>
       )}

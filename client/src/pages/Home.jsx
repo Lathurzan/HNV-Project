@@ -4,6 +4,127 @@ import HeroSection from "../components/HeroSection";
 import { motion } from "framer-motion";
 import HNV from "../assets/HNV.jpg";
 
+const StarRating = ({ rating, setRating }) => {
+  return (
+    <div className="flex items-center justify-center gap-1 mb-2">
+      {[1, 2, 3, 4, 5].map((star) => (
+        <button
+          key={star}
+          type="button"
+          onClick={() => setRating(star)}
+          className="focus:outline-none"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+            fill={star <= rating ? '#facc15' : '#e5e7eb'}
+            className={`w-7 h-7 transition-colors duration-200 ${star <= rating ? 'drop-shadow' : ''}`}
+          >
+            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.18c.969 0 1.371 1.24.588 1.81l-3.385 2.46a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.385-2.46a1 1 0 00-1.175 0l-3.385 2.46c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118l-3.385-2.46c-.783-.57-.38-1.81.588-1.81h4.18a1 1 0 00.95-.69l1.286-3.967z" />
+          </svg>
+        </button>
+      ))}
+    </div>
+  );
+};
+
+const ReviewPopup = ({ open, onClose, onSuccess }) => {
+  const [form, setForm] = useState({
+    name: "",
+    position: "",
+    rating: 5,
+    quote: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+    try {
+      const res = await fetch("/api/testimonials", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.name,
+          position: form.position,
+          rating: form.rating,
+          quote: form.quote,
+        }),
+      });
+      if (!res.ok) {
+        let data;
+        try { data = await res.json(); } catch { data = {}; }
+        throw new Error(data.message || "Failed to submit review");
+      }
+      setLoading(false);
+      onSuccess && onSuccess();
+      onClose();
+    } catch (err) {
+      setError(err.message);
+      setLoading(false);
+    }
+  };
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+      <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md relative">
+        <button
+          className="absolute top-3 right-3 text-gray-400 hover:text-gray-700 text-2xl"
+          onClick={onClose}
+        >
+          &times;
+        </button>
+        <h2 className="text-xl font-bold mb-4 text-gray-800 text-center">
+          Give Your Review
+        </h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input
+            name="name"
+            placeholder="Your Name*"
+            value={form.name}
+            onChange={handleChange}
+            className="w-full border rounded px-3 py-2"
+            required
+          />
+          <input
+            name="position"
+            placeholder="Your Position"
+            value={form.position}
+            onChange={handleChange}
+            className="w-full border rounded px-3 py-2"
+          />
+          <div>
+            <label className="block text-gray-700 mb-1">Rating</label>
+            <StarRating rating={form.rating} setRating={(star) => setForm((prev) => ({ ...prev, rating: star }))} />
+          </div>
+          <textarea
+            name="quote"
+            placeholder="Your Review*"
+            value={form.quote}
+            onChange={handleChange}
+            className="w-full border rounded px-3 py-2"
+            required
+          />
+          {error && <div className="text-red-500 text-sm">{error}</div>}
+          <button
+            type="submit"
+            className="bg-yellow-400 text-gray-900 font-semibold px-6 py-2 rounded-full hover:bg-yellow-500 transition w-full"
+            disabled={loading}
+          >
+            {loading ? "Submitting..." : "Submit Review"}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+};
 
 const Home = () => {
   // Market Sectors state and fetch
@@ -58,13 +179,21 @@ const Home = () => {
     }, []);
 
     if (loading) {
-      return <div className="text-center text-gray-300 py-8">Loading testimonials...</div>;
+      return (
+        <div className="text-center text-gray-300 py-8">
+          Loading testimonials...
+        </div>
+      );
     }
     if (error) {
       return <div className="text-center text-red-400 py-8">{error}</div>;
     }
     if (!testimonials.length) {
-      return <div className="text-center text-gray-400 py-8">No testimonials found.</div>;
+      return (
+        <div className="text-center text-gray-400 py-8">
+          No testimonials found.
+        </div>
+      );
     }
 
     return (
@@ -90,49 +219,51 @@ const Home = () => {
     );
   };
 
+  const [showReview, setShowReview] = useState(false);
+
   return (
     <div className="bg-gray-50">
       {/* Hero Section */}
-     <motion.div
-  initial={{ opacity: 0, y: -50 }}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{ duration: 1 }}
->
-  <HeroSection />
-</motion.div>
+      <motion.div
+        initial={{ opacity: 0, y: -50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1 }}
+      >
+        <HeroSection />
+      </motion.div>
 
       {/* Features Section */}
-      <section className="flex flex-wrap w-full justify-center gap-y-6 gap-x-0 md:gap-x-6 my-10">
-        { [
+      <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 text-center px-6 md:px-20 py-10 -mt-30 z-10 relative">
+        {[
           {
             icon: "fas fa-clock",
             title: "Punctual Delivery Time",
             description: "99% Delivered On Time",
-            bg: "bg-yellow-100",
+            bg: "bg-[#dcb25a]",
             textColor: "text-gray-900",
           },
           {
             icon: "fas fa-industry",
             title: "High Technology Factory",
             description: "& Environment Friendly",
-            bg: "bg-blue-100",
-            textColor: "text-gray-900",
+            bg: "bg-gray-900",
+            textColor: "text-white",
           },
           {
             icon: "fas fa-users-cog",
             title: "High Standard Labors",
             description: "99% QC Passed",
-            bg: "bg-green-100",
+            bg: "bg-[#c99f44]",
             textColor: "text-gray-900",
           },
         ].map((item, idx) => (
           <div
             key={idx}
-            className={`w-full sm:w-1/2 md:w-1/3 ${item.bg} ${item.textColor} p-8 flex flex-col items-center text-center rounded-2xl shadow-md border border-gray-100`}
+            className={`${item.bg} ${item.textColor} p-8 flex flex-col items-center justify-center  shadow-lg`}
           >
-            <i className={`${item.icon} fa-2x mb-4 text-yellow-500`}></i>
+            <i className={`${item.icon} fa-2x mb-4 text-black`}></i>
             <h3 className="font-bold text-lg mb-2">{item.title}</h3>
-            <p className="text-sm leading-tight max-w-[220px]">{item.description}</p>
+            <p className="text-sm">{item.description}</p>
           </div>
         ))}
       </section>
@@ -209,6 +340,20 @@ const Home = () => {
 
           {/* Fetch and show the last testimonial from backend */}
           <TestimonialsSection />
+          {/* Button to Submit Review */}
+          <div className="mt-10 flex justify-center">
+            <button
+              className="bg-yellow-400 text-gray-900 font-semibold px-6 py-3 rounded-full hover:bg-yellow-500 transition"
+              onClick={() => setShowReview(true)}
+            >
+              Give Your Review
+            </button>
+          </div>
+          <ReviewPopup
+            open={showReview}
+            onClose={() => setShowReview(false)}
+            onSuccess={() => {}}
+          />
         </div>
       </motion.section>
 
