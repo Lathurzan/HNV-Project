@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import HNV from "../assets/HNV.jpg"
+import HNV from "../assets/HNV.jpg";
 
 const ServicesPage = () => {
   const serviceList = [
@@ -15,74 +15,33 @@ const ServicesPage = () => {
     "Handyman",
   ];
 
-  const allCards = [
-    {
-      title: "Plastering & Rendering",
-      description:
-        "Enhance your space with flawless plastering and durable rendering. From interiors to exteriors, our craftsmanship stands the test of time.",
-      image:
-        "https://storage.googleapis.com/a1aa/image/efbf0c15-80c0-4a4f-7785-6bc23367fcd4.jpg",
-      alt: "Plastering work",
-    },
-    {
-      title: "Small work services",
-      description:
-        "Count on us for reliable small repairs and improvements. From carpentry to home maintenance, we handle tasks efficiently.",
-      image:
-        "https://storage.googleapis.com/a1aa/image/d6ad48b9-5781-4259-9703-be15577f409e.jpg",
-      alt: "Welding work",
-    },
-    {
-      title: "Bathroom Fitting",
-      description:
-        "Transform your bathroom into a modern, functional space with our expert fitting services.",
-      image: "https://storage.googleapis.com/a1aa/image/sample-bathroom.jpg",
-      alt: "Bathroom fitting",
-    },
-    {
-      title: "Gardening & Landscaping",
-      description:
-        "Beautify your outdoors with our professional gardening and landscaping solutions.",
-      image: "https://storage.googleapis.com/a1aa/image/sample-garden.jpg",
-      alt: "Landscaping",
-    },
-    {
-      title: "Plastering & Rendering",
-      description:
-        "Enhance your space with flawless plastering and durable rendering. From interiors to exteriors, our craftsmanship stands the test of time.",
-      image:
-        "https://storage.googleapis.com/a1aa/image/efbf0c15-80c0-4a4f-7785-6bc23367fcd4.jpg",
-      alt: "Plastering work",
-    },
-    {
-      title: "Small work services",
-      description:
-        "Count on us for reliable small repairs and improvements. From carpentry to home maintenance, we handle tasks efficiently.",
-      image:
-        "https://storage.googleapis.com/a1aa/image/d6ad48b9-5781-4259-9703-be15577f409e.jpg",
-      alt: "Welding work",
-    },
-    {
-      title: "Bathroom Fitting",
-      description:
-        "Transform your bathroom into a modern, functional space with our expert fitting services.",
-      image: "https://storage.googleapis.com/a1aa/image/sample-bathroom.jpg",
-      alt: "Bathroom fitting",
-    },
-    {
-      title: "Gardening & Landscaping",
-      description:
-        "Beautify your outdoors with our professional gardening and landscaping solutions.",
-      image: "https://storage.googleapis.com/a1aa/image/sample-garden.jpg",
-      alt: "Landscaping",
-    },
-  ];
-
+  // Dynamic services state
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const cardsPerPage = 2;
-  const totalPages = Math.ceil(allCards.length / cardsPerPage);
   const [currentPage, setCurrentPage] = useState(0);
 
-  const paginatedCards = allCards.slice(
+  useEffect(() => {
+    const fetchServices = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await fetch("/api/services");
+        if (!res.ok) throw new Error("Failed to fetch services");
+        const data = await res.json();
+        setServices(data);
+      } catch (err) {
+        setError(err.message || "Error fetching services");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchServices();
+  }, []);
+
+  const totalPages = Math.ceil(services.length / cardsPerPage);
+  const paginatedCards = services.slice(
     currentPage * cardsPerPage,
     (currentPage + 1) * cardsPerPage
   );
@@ -102,7 +61,7 @@ const ServicesPage = () => {
       {/* Hero Section */}
       <section className="relative w-full">
         <img
-          src={HNV} // Changed to use the imported image
+          src={HNV}
           alt="Services hero"
           className="w-full h-[400px] object-cover brightness-50"
         />
@@ -163,23 +122,31 @@ const ServicesPage = () => {
             </div>
 
             {/* Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
-              {paginatedCards.map((card, index) => (
-                <div key={index} className="border border-gray-200 shadow-md">
-                  <img
-                    src={card.image}
-                    alt={card.alt}
-                    className="w-full h-48 object-cover"
-                  />
-                  <div className="p-6">
-                    <h3 className="text-lg font-semibold mb-3 border-b border-gray-200 pb-3">
-                      {card.title}
-                    </h3>
-                    <p className="text-gray-600 mb-6">{card.description}</p>
+            {loading ? (
+              <div className="text-center py-10 w-full">Loading services...</div>
+            ) : error ? (
+              <div className="text-center text-red-500 py-10 w-full">{error}</div>
+            ) : services.length === 0 ? (
+              <div className="text-center py-10 w-full">No services found.</div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+                {paginatedCards.map((card, index) => (
+                  <div key={card._id || index} className="border border-gray-200 shadow-md">
+                    <img
+                      src={card.image}
+                      alt={card.title}
+                      className="w-full h-48 object-cover"
+                    />
+                    <div className="p-6">
+                      <h3 className="text-lg font-semibold mb-3 border-b border-gray-200 pb-3">
+                        {card.title}
+                      </h3>
+                      <p className="text-gray-600 mb-6">{card.description}</p>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
 
             {/* Pagination Dots */}
             <div className="flex justify-center gap-2 mt-8">

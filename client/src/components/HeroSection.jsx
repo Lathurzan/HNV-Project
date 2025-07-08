@@ -83,6 +83,8 @@ const HeroSection = () => {
         </div>
       </div>
 
+      {/* Remove navigation arrows */}
+      {/*
       <button
         onClick={handlePrev}
         className="absolute top-1/2 left-4 transform -translate-y-1/2 text-white text-4xl"
@@ -97,6 +99,7 @@ const HeroSection = () => {
       >
         ❯
       </button>
+      */}
 
       <div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 flex space-x-2">
         {heroImages.map((_, i) => (

@@ -1,31 +1,81 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import HNV from "../assets/HNV.jpg"
 
-const features = [
+const ICON_MAP = {
+  "Reliable Teamwork": "fas fa-hard-hat",
+  "Quality Tools & Methods": "fas fa-tools",
+  "Eco-Friendly Focus": "fas fa-leaf",
+  "Safety First": "fas fa-shield-alt",
+};
+
+const DEFAULT_FEATURES = [
   {
-    icon: "fas fa-industry",
-    title: "Expert Craftsmanship",
-    description:
-      "HNV Building blends passion and expertise for top-notch domestic and commercial projects.",
+    icon: "fas fa-hard-hat",
+    title: "Reliable Teamwork",
+    description: "Our skilled professionals work together seamlessly to bring your vision to life.",
+    bg: "bg-black",
+    textColor: "text-white",
   },
   {
-    icon: "fas fa-broadcast-tower",
-    title: "Innovative Solutions",
-    description:
-      "We go beyond construction, bringing dreams to life by enhancing both residential and commercial environments.",
+    icon: "fas fa-tools",
+    title: "Quality Tools & Methods",
+    description: "We use high-grade tools and proven techniques to ensure durable, lasting builds.",
+    bg: "bg-gray-900",
+    textColor: "text-white",
   },
   {
-    icon: "fas fa-battery-full",
-    title: "Built to Last",
-    description:
-      "At HNV Building, our commitment is clear – delivering construction excellence that stands out and stands strong.",
+    icon: "fas fa-leaf",
+    title: "Eco-Friendly Focus",
+    description: "Committed to green building solutions that are safe for both people and the planet.",
+    bg: "bg-[#dcb25a]",
+    textColor: "text-black",
+  },
+  {
+    icon: "fas fa-shield-alt",
+    title: "Safety First",
+    description: "Safety is at the heart of everything we do — for our team, clients, and projects.",
+    bg: "bg-[#c99f44]",
+    textColor: "text-black",
   },
 ];
 
 const AboutUs2 = () => {
+  const [features, setFeatures] = useState(DEFAULT_FEATURES);
+  const [story, setStory] = useState("");
+  const [mission, setMission] = useState("");
+
   useEffect(() => {
     window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
+    const fetchAbout = async () => {
+      try {
+        const res = await fetch("/api/about");
+        if (res.ok) {
+          const data = await res.json();
+          if (data) {
+            if (Array.isArray(data.features) && data.features.length > 0) {
+              const mapped = data.features.slice(0, 4).map((f, i) => ({
+                icon: ICON_MAP[f.title] || DEFAULT_FEATURES[i]?.icon || "fas fa-star",
+                title: f.title,
+                description: f.description,
+                bg: DEFAULT_FEATURES[i]?.bg || "bg-gray-200",
+                textColor: DEFAULT_FEATURES[i]?.textColor || "text-black",
+              }));
+              setFeatures(mapped);
+            }
+            setStory(data.story || "");
+            setMission(data.mission || "");
+          }
+        }
+      } catch (err) {
+        // fallback to default
+      }
+    };
+    fetchAbout();
   }, []);
 
   return (
@@ -53,36 +103,7 @@ const AboutUs2 = () => {
 
       {/* Icon Grid */}
       <section className="flex flex-wrap w-full">
-        {[
-          {
-            icon: "fas fa-hard-hat",
-            title: "Reliable Teamwork",
-            description: "Our skilled professionals work together seamlessly to bring your vision to life.",
-            bg: "bg-black",
-            textColor: "text-white",
-          },
-          {
-            icon: "fas fa-tools",
-            title: "Quality Tools & Methods",
-            description: "We use high-grade tools and proven techniques to ensure durable, lasting builds.",
-            bg: "bg-gray-900",
-            textColor: "text-white",
-          },
-          {
-            icon: "fas fa-leaf",
-            title: "Eco-Friendly Focus",
-            description: "Committed to green building solutions that are safe for both people and the planet.",
-            bg: "bg-[#dcb25a]",
-            textColor: "text-black",
-          },
-          {
-            icon: "fas fa-shield-alt",
-            title: "Safety First",
-            description: "Safety is at the heart of everything we do — for our team, clients, and projects.",
-            bg: "bg-[#c99f44]",
-            textColor: "text-black",
-          },
-        ].map((item, index) => (
+        {features.map((item, index) => (
           <div
             key={index}
             className={`w-1/2 md:w-1/4 ${item.bg} ${item.textColor} p-8 flex flex-col items-center text-center`}
@@ -103,21 +124,14 @@ const AboutUs2 = () => {
             Your Trusted Construction Partner
           </h2>
           <p className="text-gray-600 text-sm mb-6 max-w-md leading-relaxed">
-            At HNV Building, we combine passion, precision, and professionalism to bring your vision to life.
-            Whether it's a cozy home or a large-scale commercial project, our mission is to build spaces that reflect quality,
-            functionality, and enduring value.
+            {story || "At HNV Building, we combine passion, precision, and professionalism to bring your vision to life. Whether it's a cozy home or a large-scale commercial project, our mission is to build spaces that reflect quality, functionality, and enduring value."}
           </p>
-          <p className="text-gray-600 text-sm mb-10 max-w-md leading-relaxed">
-            With a strong foundation in craftsmanship and a commitment to excellence, we tailor every project to your needs —
-            ensuring timely delivery, transparent communication, and results that exceed expectations.
-            From planning to finishing touches, we’re with you every step of the way.
-          </p>
-          <button
-            type="button"
+          <Link
+            to="/contact"
             className="text-xs font-bold text-yellow-600 border border-yellow-600 px-5 py-2 w-max hover:bg-yellow-600 hover:text-white transition-colors"
           >
             Get A Quote
-          </button>
+          </Link>
         </div>
 
         {/* Right Side */}
@@ -149,15 +163,7 @@ const AboutUs2 = () => {
           </h3>
         </div>
         <div className="md:w-2/3 mt-6 md:mt-0 text-sm md:text-base leading-relaxed text-gray-600 max-w-4xl">
-          At HNV Building, our mission is to shape environments that inspire, endure, and elevate lives.
-          We are committed to delivering exceptional construction solutions through craftsmanship, innovation,
-          and a deep understanding of our clients’ needs.
-          <br /><br />
-          Every project is more than just bricks and mortar — it’s a promise to build lasting value,
-          create meaningful spaces, and foster relationships rooted in trust, transparency, and excellence.
-          <br /><br />
-          Whether residential or commercial, we aim to set the benchmark for quality and customer satisfaction
-          in every structure we bring to life.
+          {mission || "At HNV Building, our mission is to shape environments that inspire, endure, and elevate lives. We are committed to delivering exceptional construction solutions through craftsmanship, innovation, and a deep understanding of our clients’ needs. Every project is more than just bricks and mortar — it’s a promise to build lasting value, create meaningful spaces, and foster relationships rooted in trust, transparency, and excellence. Whether residential or commercial, we aim to set the benchmark for quality and customer satisfaction in every structure we bring to life."}
         </div>
       </section>
     </motion.div>

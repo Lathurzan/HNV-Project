@@ -58,7 +58,7 @@ const Rights = () => {
             GitHub
           </a>
           <a
-            href="https://yourportfolio.com"
+            href="https://unique-crostata-78b953.netlify.app/"
             target="_blank"
             rel="noopener noreferrer"
             className="text-blue-700 hover:text-blue-900 text-xs flex items-center gap-1 transition"

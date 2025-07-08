@@ -132,6 +132,31 @@ const Home = () => {
   const [sectorsLoading, setSectorsLoading] = useState(true);
   const [sectorsError, setSectorsError] = useState(null);
 
+  // Story state and fetch
+  const [story, setStory] = useState("");
+  const [yearOfEstablishment, setYearOfEstablishment] = useState("");
+  const [storyLoading, setStoryLoading] = useState(true);
+  const [storyError, setStoryError] = useState(null);
+
+  useEffect(() => {
+    setStoryLoading(true);
+    setStoryError(null);
+    fetch("/api/story")
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch story");
+        return res.json();
+      })
+      .then((data) => {
+        setStory(data.story || "");
+        setYearOfEstablishment(data.yearOfEstablishment || "our founding year");
+        setStoryLoading(false);
+      })
+      .catch((err) => {
+        setStoryError(err.message || "Error loading story");
+        setStoryLoading(false);
+      });
+  }, []);
+
   useEffect(() => {
     setSectorsLoading(true);
     setSectorsError(null);
@@ -149,6 +174,7 @@ const Home = () => {
         setSectorsLoading(false);
       });
   }, []);
+  
 
   // TestimonialsSection: fetches and displays the last testimonial from backend
   const TestimonialsSection = () => {
@@ -270,48 +296,53 @@ const Home = () => {
 
       {/* Story Section */}
       <motion.section
-        initial={{ opacity: 0, x: -50 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.8 }}
-        viewport={{ once: true }}
-        className="relative bg-gradient-to-r from-gray-100 to-gray-200 py-20 px-4 sm:px-8 md:px-16 lg:px-32"
-      >
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:space-x-16">
-          <div className="md:w-1/3 mb-8 md:mb-0 flex flex-col items-center md:items-start">
-            <h2 className="text-gray-700 text-2xl font-bold border-b-4 border-yellow-500 pb-2 mb-2 text-center md:text-left">
-              Real Hnv Story
-            </h2>
+      initial={{ opacity: 0, x: -50 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.8 }}
+      viewport={{ once: true }}
+      className="relative bg-gradient-to-r from-gray-100 to-gray-200 py-20 px-4 sm:px-8 md:px-16 lg:px-32"
+    >
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:space-x-16">
+        <div className="md:w-1/3 mb-8 md:mb-0 flex flex-col items-center md:items-start">
+          <h2 className="text-gray-700 text-2xl font-bold border-b-4 border-yellow-500 pb-2 mb-2 text-center md:text-left">
+            Real Hnv Story
+          </h2>
+        </div>
+        <div className="md:w-2/3 flex flex-col space-y-8">
+          <div className="flex justify-center md:justify-start space-x-8 text-gray-600 text-2xl">
+            <i className="fas fa-building" />
+            <i className="fas fa-broadcast-tower" />
+            <i className="fas fa-battery-full" />
           </div>
-          <div className="md:w-2/3 flex flex-col space-y-8">
-            <div className="flex justify-center md:justify-start space-x-8 text-gray-600 text-2xl">
-              <i className="fas fa-building" />
-              <i className="fas fa-broadcast-tower" />
-              <i className="fas fa-battery-full" />
-            </div>
-            <p className="text-base leading-relaxed max-w-2xl text-gray-700 mx-auto md:mx-0 text-center md:text-left">
-              HNV Building started back in [Year of Establishment] with just a
-              bunch of passionate people who loved building things. Since then,
-              we've grown into a strong team that's all about bringing fresh
-              ideas, solid quality, and trust to every project we do.
-            </p>
-            <div className="flex justify-center md:justify-start space-x-4">
-              <a
-                href="./About"
-                className="bg-yellow-500 text-white text-sm font-semibold px-6 py-2 rounded-lg shadow hover:bg-yellow-600 transition inline-block text-center"
-              >
-                Learn More
-              </a>
-            </div>
+          <p className="text-base leading-relaxed max-w-2xl text-gray-700 mx-auto md:mx-0 text-center md:text-left">
+            {storyLoading ? (
+              "Loading story..."
+            ) : storyError ? (
+              <span className="text-red-500">{storyError}</span>
+            ) : story ? (
+              story.replace("[Year of Establishment]", yearOfEstablishment || "our founding year")
+            ) : (
+              "No story available."
+            )}
+          </p>
+          <div className="flex justify-center md:justify-start space-x-4">
+            <a
+              href="./About"
+              className="bg-yellow-500 text-white text-sm font-semibold px-6 py-2 rounded-lg shadow hover:bg-yellow-600 transition inline-block text-center"
+            >
+              Learn More
+            </a>
           </div>
         </div>
-        <img
-          src="https://storage.googleapis.com/a1aa/image/165a34b7-23b0-4c6d-5130-82be8574f2f7.jpg"
-          alt="Light gray factory illustration"
-          className="pointer-events-none select-none absolute top-0 right-0 bottom-0 opacity-10 max-w-[400px] hidden md:block"
-          width={400}
-          height={300}
-        />
-      </motion.section>
+      </div>
+      <img
+        src="https://storage.googleapis.com/a1aa/image/165a34b7-23b0-4c6d-5130-82be8574f2f7.jpg"
+        alt="Light gray factory illustration"
+        className="pointer-events-none select-none absolute top-0 right-0 bottom-0 opacity-10 max-w-[400px] hidden md:block"
+        width={400}
+        height={300}
+      />
+    </motion.section>
 
       {/* Testimonial Section */}
       <motion.section

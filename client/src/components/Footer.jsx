@@ -4,6 +4,9 @@ import { Phone, Mail, MapPin, Facebook, Instagram, HardHat } from 'lucide-react'
 
 const Footer = () => {
   const [socialLinks, setSocialLinks] = useState({});
+  const [contactInfo, setContactInfo] = useState({ address: '', phone: '', email: '' });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetch('/api/settings')
@@ -14,8 +17,19 @@ const Footer = () => {
           instagram: data.instagramUrl,
           twitter: data.twitterUrl,
         });
+        setContactInfo({
+          address: data.address || '',
+          phone: data.phone || '',
+          email: data.email || '',
+        });
+        setLoading(false);
       })
-      .catch(() => setSocialLinks({}));
+      .catch(() => {
+        setSocialLinks({});
+        setContactInfo({ address: '', phone: '', email: '' });
+        setError('Unable to load contact info');
+        setLoading(false);
+      });
   }, []);
 
   // Helper to scroll to top on navigation
@@ -84,15 +98,41 @@ const Footer = () => {
           <ul className="space-y-3 text-gray-400">
             <li className="flex items-start">
               <MapPin className="mr-2 mt-1 h-5 w-5 text-yellow-500" />
-              <span>123 Construction Road, Building City, BC12 3DE</span>
+              {loading ? (
+                <span className="text-gray-500">Loading...</span>
+              ) : error ? (
+                <span className="text-red-400">-</span>
+              ) : contactInfo.address ? (
+                <span>{contactInfo.address.split('\n').map((line, idx) => (
+                  <React.Fragment key={idx}>{line}<br /></React.Fragment>
+                ))}</span>
+              ) : (
+                <span>-</span>
+              )}
             </li>
             <li className="flex items-center">
               <Phone className="mr-2 h-5 w-5 text-yellow-500" />
-              <a href="tel:+441234567890" className="hover:text-yellow-500 transition">+44 (0) 1234 567890</a>
+              {loading ? (
+                <span className="text-gray-500">Loading...</span>
+              ) : error ? (
+                <span className="text-red-400">-</span>
+              ) : contactInfo.phone ? (
+                <a href={`tel:${contactInfo.phone}`} className="hover:text-yellow-500 transition">{contactInfo.phone}</a>
+              ) : (
+                <span>-</span>
+              )}
             </li>
             <li className="flex items-center">
               <Mail className="mr-2 h-5 w-5 text-yellow-500" />
-              <a href="mailto:info@hnvbuilding.com" className="hover:text-yellow-500 transition">info@hnvbuilding.com</a>
+              {loading ? (
+                <span className="text-gray-500">Loading...</span>
+              ) : error ? (
+                <span className="text-red-400">-</span>
+              ) : contactInfo.email ? (
+                <a href={`mailto:${contactInfo.email}`} className="hover:text-yellow-500 transition">{contactInfo.email}</a>
+              ) : (
+                <span>-</span>
+              )}
             </li>
           </ul>
         </div>

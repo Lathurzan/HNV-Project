@@ -1,7 +1,72 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 
 const ContactUs = () => {
+  const [settings, setSettings] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Contact form state
+  const [form, setForm] = useState({
+    fullName: "",
+    email: "",
+    subject: "",
+    message: "",
+  });
+  const [formLoading, setFormLoading] = useState(false);
+  const [formError, setFormError] = useState("");
+  const [formSuccess, setFormSuccess] = useState("");
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await fetch('/api/settings');
+        if (!res.ok) throw new Error('Failed to fetch settings');
+        const data = await res.json();
+        setSettings(data);
+      } catch (err) {
+        setError(err.message || 'Error fetching settings');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSettings();
+  }, []);
+
+  // Handle form input changes
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Handle form submit
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setFormError("");
+    setFormSuccess("");
+    setFormLoading(true);
+    try {
+      const res = await fetch("/api/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      if (!res.ok) {
+        let data;
+        try { data = await res.json(); } catch { data = {}; }
+        throw new Error(data.error || "Failed to send message");
+      }
+      setFormSuccess("Message sent successfully!");
+      setForm({ fullName: "", email: "", subject: "", message: "" });
+    } catch (err) {
+      setFormError(err.message);
+    } finally {
+      setFormLoading(false);
+    }
+  };
+
   return (
     <div className="bg-gray-100 font-sans text-base text-gray-700 min-h-screen">
       {/* Header */}
@@ -47,36 +112,51 @@ const ContactUs = () => {
           <p className="mb-8 text-sm text-gray-500 text-center">
             A wonderful serenity has taken possession of my entire soul, like these sweet mornings of spring which I enjoy with my whole heart.
           </p>
-          <form className="space-y-5">
+          <form className="space-y-5" onSubmit={handleSubmit}>
             <input
               type="text"
+              name="fullName"
               placeholder="Full Name*"
+              value={form.fullName}
+              onChange={handleChange}
               required
               className="w-full bg-gray-50 border border-gray-300 text-base px-5 py-3 rounded focus:outline-none focus:ring-2 focus:ring-yellow-400"
             />
             <input
               type="email"
+              name="email"
               placeholder="Email*"
+              value={form.email}
+              onChange={handleChange}
               required
               className="w-full bg-gray-50 border border-gray-300 text-base px-5 py-3 rounded focus:outline-none focus:ring-2 focus:ring-yellow-400"
             />
             <input
               type="text"
+              name="subject"
               placeholder="Subject*"
+              value={form.subject}
+              onChange={handleChange}
               required
               className="w-full bg-gray-50 border border-gray-300 text-base px-5 py-3 rounded focus:outline-none focus:ring-2 focus:ring-yellow-400"
             />
             <textarea
               rows={4}
+              name="message"
               placeholder="Message*"
+              value={form.message}
+              onChange={handleChange}
               required
               className="w-full bg-gray-50 border border-gray-300 text-base px-5 py-3 rounded resize-y focus:outline-none focus:ring-2 focus:ring-yellow-400"
             />
+            {formError && <div className="text-red-500 text-sm">{formError}</div>}
+            {formSuccess && <div className="text-green-600 text-sm">{formSuccess}</div>}
             <button
               type="submit"
               className="w-full bg-yellow-500 text-white text-base font-bold uppercase px-5 py-3 rounded shadow hover:bg-yellow-600 transition-colors"
+              disabled={formLoading}
             >
-              Submit Now
+              {formLoading ? "Submitting..." : "Submit Now"}
             </button>
           </form>
         </motion.section>
@@ -106,21 +186,41 @@ const ContactUs = () => {
                 className="w-full h-full"
               ></iframe>
             </div>
-            <address className="not-italic text-base leading-relaxed text-gray-700 mb-4">
-              30 Ingle head, Fulwood,<br />
-              Preston, Lancashire, United Kingdom,<br />
-              PR2 3NS
-            </address>
+            {loading ? (
+              <div className="text-gray-400 text-sm mb-4">Loading address...</div>
+            ) : error ? (
+              <div className="text-red-500 text-sm mb-4">{error}</div>
+            ) : (
+              <address className="not-italic text-base leading-relaxed text-gray-700 mb-4">
+                {settings?.address?.split('\n').map((line, idx) => (
+                  <React.Fragment key={idx}>
+                    {line}<br />
+                  </React.Fragment>
+                ))}
+              </address>
+            )}
             <div className="space-y-3 text-base text-gray-700">
               <div className="flex items-center gap-2">
                 <i className="fas fa-envelope text-yellow-500" />
-                <a href="mailto:contact@infinitewptheme.com" className="hover:underline">
-                  contact@infinitewptheme.com
-                </a>
+                {loading ? (
+                  <span className="text-gray-400">Loading...</span>
+                ) : error ? (
+                  <span className="text-red-500">-</span>
+                ) : (
+                  <a href={`mailto:${settings?.email || ''}`} className="hover:underline">
+                    {settings?.email || '-'}
+                  </a>
+                )}
               </div>
               <div className="flex items-center gap-2">
                 <i className="fas fa-phone-alt text-yellow-500" />
-                <span>+44 7854 761759</span>
+                {loading ? (
+                  <span className="text-gray-400">Loading...</span>
+                ) : error ? (
+                  <span className="text-red-500">-</span>
+                ) : (
+                  <span>{settings?.phone || '-'}</span>
+                )}
               </div>
             </div>
           </div>

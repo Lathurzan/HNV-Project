@@ -156,7 +156,7 @@ const AdminPortfolio = () => {
               }}
             />
             <h3 className="font-semibold text-lg text-gray-800 dark:text-white">{project.title}</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">{project.category}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-2 break-words whitespace-pre-line max-h-20 overflow-auto">{project.category}</p>
             <div className="flex justify-between">
               <button
                 onClick={() => handleEdit(index)}

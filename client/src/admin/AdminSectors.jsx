@@ -193,7 +193,7 @@ const AdminSectors = () => {
               }}
             />
             <h4 className="font-semibold text-lg text-gray-800 dark:text-white">{sector.title}</h4>
-            <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">{sector.desc}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-3 break-words whitespace-pre-line max-h-24 overflow-auto">{sector.desc}</p>
             <div className="flex justify-between">
               <button
                 onClick={() => handleEdit(index)}

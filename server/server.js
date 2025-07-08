@@ -29,6 +29,8 @@ app.use('/api/sectors', require('./routes/sectorRoutes'));
 app.use('/api/settings', require('./routes/settingsRoutes'));
 app.use('/api/services', require('./routes/serviceRoutes'));
 app.use("/api/testimonials", require("./routes/testimonialRoutes"));
+app.use("/api/story", require("./routes/story"));
+app.use('/api/messages', require('./routes/contactRoutes'));
 
 
 const Testimonial = require("./models/testimonialModel");
