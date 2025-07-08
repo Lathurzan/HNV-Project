@@ -425,7 +425,7 @@ const Home = () => {
                 <h4 className="text-base font-semibold text-blue-800 mb-1 text-center drop-shadow-sm">
                   {sector.title}
                 </h4>
-                <p className="text-xs text-blue-900 leading-tight text-center bg-blue-100 bg-opacity-60 rounded-lg px-3 py-2 mt-1">
+               <p className="text-xs text-blue-900 leading-tight text-center bg-blue-100 bg-opacity-60 rounded-lg px-3 py-2 mt-1 break-all whitespace-normal">
                   {sector.desc}
                 </p>
               </motion.div>
