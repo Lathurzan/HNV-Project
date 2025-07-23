@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/authContext';
 import { ChefHat, Lock, Mail, Eye, EyeOff, AlertCircle } from 'lucide-react';
 
@@ -8,8 +8,9 @@ const AdminLogin = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
-  const { login, isAuthenticated, isLoading } = useAuth();
+  const { login, logout, isAuthenticated, isLoading } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
 
   const from = location.state?.from?.pathname || '/admin';
 
@@ -26,10 +27,27 @@ const AdminLogin = () => {
       return;
     }
 
-    const success = await login(email, password);
-    if (!success) {
-      setError('Invalid email or password');
+    try {
+      const res = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: email, password })
+      });
+      const data = await res.json();
+      if (res.ok && data.auth) {
+        // Store a dummy token and user info for context
+        login('dummy-token', { username: email });
+      } else {
+        setError(data.message || 'Invalid email or password');
+      }
+    } catch (err) {
+      setError('Server error');
     }
+  };
+
+  const handleLogout = () => {
+    if (typeof logout === 'function') logout();
+    navigate('/admin-login', { replace: true });
   };
 
   return (
@@ -54,12 +72,6 @@ const AdminLogin = () => {
               </div>
             )}
 
-            {/* Demo Credentials Info
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <p className="text-sm text-blue-800 font-medium mb-2">Demo Credentials:</p>
-              <p className="text-xs text-blue-700">Email: admin@hnv.com</p>
-              <p className="text-xs text-blue-700">Password: admin123</p>
-            </div> */}
 
             <div className="space-y-4">
               {/* Email Field */}

@@ -17,6 +17,8 @@ import NotFound from './pages/NotFound';
 import Admin from './pages/Admin';
 import AdminLogin from './admin/AdminLogin';
 import AdminRoute from './admin/AdminRoute';
+import ChangePassword from './admin/ChangePassword';
+import AdminRegister from './admin/AdminRegister/adminRegister';
 
 // Rights management
 import Rights from './rights';
@@ -49,6 +51,12 @@ function App() {
         <Routes>
           {/* Admin login route */}
           <Route path="/admin-login" element={<AdminLogin />} />
+
+          {/* Change Admin Password route */}
+          <Route path="/admin/change-password" element={<ChangePassword />} />
+
+          {/* Admin register route (separate, public) */}
+          <Route path="/admin-register" element={<AdminRegister />} />
 
           {/* Protected admin routes */}
           <Route

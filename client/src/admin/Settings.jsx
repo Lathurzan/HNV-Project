@@ -239,7 +239,7 @@ const AdminSettings = () => {
       <div className="flex justify-center mt-10">
         <button
           type="button"
-          className="flex items-center gap-2 px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md transition shadow"
+          className="flex items-center gap-2 px-6 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-md transition shadow"
           onClick={() => navigate('/admin/change-password')}
         >
           <Lock size={20} /> Change Admin Password

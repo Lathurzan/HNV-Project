@@ -45,7 +45,7 @@ const StoryForm = () => {
       />
       <button
         type="submit"
-        className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-60"
+        className="bg-yellow-500 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 disabled:opacity-60"
         disabled={loading}
       >
         {loading ? "Saving..." : "Save Story"}

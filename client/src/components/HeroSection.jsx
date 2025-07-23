@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import Hero1 from "../assets/Hero1.jpg";
-import Hero2 from "../assets/Hero2.jpg";
-import Hero3 from "../assets/Hero3.jpg";
+import Hero1 from "../assets/Hero02.jpg";
+import Hero2 from "../assets/Hero003.jpg";
+import Hero3 from "../assets/Hero03.jpg";
 
 const heroImages = [
   {
@@ -61,17 +61,17 @@ const HeroSection = () => {
       <div className="absolute inset-0 flex items-center z-10">
         <div className="max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 w-full">
           <div className="max-w-3xl text-left">
-            <h1 className="text-white font-normal text-[40px] sm:text-[30px] leading-tight">
+            <h1 className="text-black font-bold text-[40px] sm:text-[30px] leading-tight">
               {title1.split(" ")[0]}{" "}
-              <span className="text-white">{title1.split(" ")[1]}</span>
+              <span className="text-black">{title1.split(" ")[1]}</span>
             </h1>
 
-            <h1 className="text-white font-extrabold text-[60px] sm:text-[80px] leading-tight">
+            <h1 className="text-black font-bold text-[60px] sm:text-[80px] leading-tight">
               {title.split(" ")[0]}{" "}
               <span className="text-yellow-400">{title.split(" ")[1]}</span>
             </h1>
 
-            <p className="text-white text-lg max-w-xl mt-4">{subtitle}</p>
+            <p className="text-black text-lg max-w-xl mt-4 font-bold ">{subtitle}</p>
 
             <a
               href="/Portfolio"
@@ -83,23 +83,7 @@ const HeroSection = () => {
         </div>
       </div>
 
-      {/* Remove navigation arrows */}
-      {/*
-      <button
-        onClick={handlePrev}
-        className="absolute top-1/2 left-4 transform -translate-y-1/2 text-white text-4xl"
-        aria-label="Previous Slide"
-      >
-        ❮
-      </button>
-      <button
-        onClick={handleNext}
-        className="absolute top-1/2 right-4 transform -translate-y-1/2 text-white text-4xl"
-        aria-label="Next Slide"
-      >
-        ❯
-      </button>
-      */}
+    
 
       <div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 flex space-x-2">
         {heroImages.map((_, i) => (

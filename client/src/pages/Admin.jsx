@@ -1,7 +1,8 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
-import { Sun, Moon, Menu, X, Home, Settings, FileText, Users, Grid, LogOut } from 'lucide-react';
+import { Sun, Moon, Menu, X, Home, Settings, FileText, Users, Grid, LogOut, MessageSquare, Briefcase  } from 'lucide-react';
+import { useAuth } from '../contexts/authContext';
 
 // Admin components
 import Dashboard from '../admin/Dashboard';
@@ -20,6 +21,7 @@ const Admin = () => {
   const [unreadCount, setUnreadCount] = useState(0);
   const navigate = useNavigate();
   const location = useLocation();
+  const { logout } = useAuth();
 
   useEffect(() => {
     document.title = 'Admin Dashboard - HNV Building';
@@ -85,7 +87,8 @@ const Admin = () => {
   };
 
   const handleLogout = () => {
-    navigate('/');
+    if (typeof logout === 'function') logout();
+    navigate('/admin-login', { replace: true });
   };
 
   return (
@@ -134,19 +137,19 @@ const Admin = () => {
                 Services
               </Link>
             </li>
-            <li>
-              <Link
-                to="/admin/testimonials"
-                className={`flex items-center px-4 py-2.5 rounded-lg ${
-                  location.pathname === '/admin/testimonials'
-                    ? 'bg-yellow-500 text-white'
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-                }`}
-              >
-                <Users className="h-5 w-5 mr-3" />
-                Testimonials
-              </Link>
-            </li>
+           <li>
+  <Link
+    to="/admin/testimonials"
+    className={`flex items-center px-4 py-2.5 rounded-lg ${
+      location.pathname === '/admin/testimonials'
+        ? 'bg-yellow-500 text-white'
+        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+    }`}
+  >
+    <MessageSquare className="h-5 w-5 mr-3" /> {/* Changed icon to MessageSquare */}
+    Testimonials
+  </Link>
+</li>
             <li>
               <Link
                 to="/admin/AdminPortfolio"
@@ -169,7 +172,7 @@ const Admin = () => {
                     : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
               >
-                <Users className="h-5 w-5 mr-3" />
+                <FileText className="h-5 w-5 mr-3" />
                 About Page
               </Link>
             </li>
@@ -182,7 +185,7 @@ const Admin = () => {
                     : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
               >
-                <Users className="h-5 w-5 mr-3" />
+                <Briefcase className="h-5 w-5 mr-3" />
                 Market Sector
               </Link>
             </li>
@@ -195,7 +198,7 @@ const Admin = () => {
                     : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
               >
-                <Users className="h-5 w-5 mr-3" />
+                <FileText className="h-5 w-5 mr-3" />
                 Story
               </Link>
             </li>
@@ -208,7 +211,7 @@ const Admin = () => {
                     : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
               >
-                <Users className="h-5 w-5 mr-3" />
+                <MessageSquare className="h-5 w-5 mr-3" />
                 <span className="relative flex items-center">
                   Messages
                   {unreadCount > 0 && (
