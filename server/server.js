@@ -42,7 +42,7 @@ app.get("/debug/all-testimonials", async (req, res) => {
 });
 
 // Connect to MongoDB using Mongoose before starting the server
-const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://lathulathurzan:QTBxgGTyLd09yJ7@hnv.bgpji1c.mongodb.net/?retryWrites=true&w=majority&appName=HNV';
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/HNV';
 mongoose.connect(MONGO_URI, { dbName: 'HNV' })
   .then(() => {
     console.log('Mongoose connected to DB:', mongoose.connection.name);
