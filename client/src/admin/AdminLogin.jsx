@@ -28,7 +28,7 @@ const AdminLogin = () => {
     }
 
     try {
-      const res = await fetch('/api/admin/login', {
+      const res = await fetch('https://hnv-project.onrender.com/api/admin/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: email, password })
@@ -47,7 +47,7 @@ const AdminLogin = () => {
 
   const handleLogout = () => {
     if (typeof logout === 'function') logout();
-    navigate('/admin-login', { replace: true });
+    navigate('https://hnv-project.onrender.com/admin-login', { replace: true });
   };
 
   return (

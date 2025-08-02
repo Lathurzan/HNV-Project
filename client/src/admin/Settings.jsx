@@ -59,7 +59,7 @@ const AdminSettings = () => {
     }
     setIsSubmitting(true);
     try {
-      const res = await axios.post('/api/settings', settings);
+      const res = await axios.post('https://hnv-project.onrender.com/api/settings', settings);
       showAlert(res.data.message, 'success');
     } catch (err) {
       const errMsg = err.response?.data?.message || 'Unable to save settings';
@@ -82,7 +82,7 @@ const AdminSettings = () => {
     setAlertMessage('');
     setLoadingPassword(true);
     try {
-      const res = await axios.post('/api/admin/change-password', formData);
+      const res = await axios.post('https://hnv-project.onrender.com/api/admin/change-password', formData);
       showAlert(res.data.message, 'success');
       setFormData({ username: '', oldPassword: '', newPassword: '' });
       setShowPasswordModal(false); // Close the modal after successful change
@@ -101,16 +101,16 @@ const AdminSettings = () => {
   React.useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const res = await axios.get('/api/settings');
+        const res = await axios.get('https://hnv-project.onrender.com/api/settings');
         setSettings(res.data);
       } catch (err) {
-        setSettings({}); // fallback to empty if not found
+        setSettings({}); 
       }
     };
     fetchSettings();
   }, []);
 
-  if (!settings) return null; // or a loading spinner
+  if (!settings) return null; 
 
   return (
     <div className="max-w-5xl mx-auto mt-10 px-4">
@@ -240,7 +240,7 @@ const AdminSettings = () => {
         <button
           type="button"
           className="flex items-center gap-2 px-6 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-md transition shadow"
-          onClick={() => navigate('/admin/change-password')}
+          onClick={() => navigate('https://hnv-project.onrender.com/admin/change-password')}
         >
           <Lock size={20} /> Change Admin Password
         </button>

@@ -20,7 +20,7 @@ const AdminServicesPage = () => {
 
   const fetchServices = async () => {
     try {
-      const res = await fetch('/api/services');
+      const res = await fetch('https://hnv-project.onrender.com/api/services');
       const data = await res.json();
       if (res.ok) setServices(data);
       else showAlert('Failed to fetch services.', 'error');
@@ -36,7 +36,7 @@ const AdminServicesPage = () => {
 
   const handleDelete = async (id) => {
     try {
-      const res = await fetch(`/api/services/${id}`, { method: 'DELETE' });
+      const res = await fetch(`https://hnv-project.onrender.com/api/services/${id}`, { method: 'DELETE' });
       if (res.ok) {
         setServices(services.filter((service) => service._id !== id));
         showAlert('Service deleted successfully.', 'success');
@@ -57,7 +57,7 @@ const AdminServicesPage = () => {
   const handleSaveEdit = async () => {
     if (editingService) {
       try {
-        const res = await fetch(`/api/services/${editingService._id}`, {
+        const res = await fetch(`https://hnv-project.onrender.com/api/services/${editingService._id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(editingService),
@@ -81,7 +81,7 @@ const AdminServicesPage = () => {
       return;
     }
     try {
-      const response = await fetch('/api/services', {
+      const response = await fetch('https://hnv-project.onrender.com/api/services', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newService),
@@ -101,7 +101,7 @@ const AdminServicesPage = () => {
 
   const handleToggleActive = async (id) => {
     try {
-      const res = await fetch(`/api/services/${id}/toggle`, { method: 'PATCH' });
+      const res = await fetch(`https://hnv-project.onrender.com/api/services/${id}/toggle`, { method: 'PATCH' });
       if (res.ok) {
         await fetchServices();
       } else {

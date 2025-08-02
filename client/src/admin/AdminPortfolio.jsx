@@ -16,7 +16,7 @@ const AdminPortfolio = () => {
     // Fetch projects from backend
     const fetchProjects = async () => {
       try {
-        const res = await axios.get('/api/projects');
+        const res = await axios.get('https://hnv-project.onrender.com/api/projects');
         setProjects(res.data);
       } catch (err) {
         setAlert('Failed to load projects');
@@ -42,7 +42,7 @@ const AdminPortfolio = () => {
       // Update project in backend
       const project = projects[editIndex];
       try {
-        await axios.put(`/api/projects/${project._id}`, newProject);
+        await axios.put(`https://hnv-project.onrender.com/api/projects/${project._id}`, newProject);
         const updated = [...projects];
         updated[editIndex] = { ...newProject, _id: project._id };
         setProjects(updated);
@@ -54,7 +54,7 @@ const AdminPortfolio = () => {
       }
     } else {
       try {
-        const res = await axios.post('/api/projects', newProject);
+        const res = await axios.post('https://hnv-project.onrender.com/api/projects', newProject);
         setProjects([...projects, { ...newProject, _id: res.data.projectId }]);
         setNewProject({ title: '', category: '', image: '' });
         setAlert('Project added successfully');
@@ -73,7 +73,7 @@ const AdminPortfolio = () => {
     const project = projects[index];
     if (!project || !project._id) return;
     try {
-      await axios.delete(`/api/projects/${project._id}`);
+      await axios.delete(`https://hnv-project.onrender.com/api/projects/${project._id}`);
       setProjects(projects.filter((_, i) => i !== index));
       setAlert('Project deleted successfully');
     } catch (err) {

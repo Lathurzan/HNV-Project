@@ -33,7 +33,7 @@ const ChangePassword = () => {
     setAlertMessage('');
     setLoading(true);
     try {
-      const res = await axios.post('/api/admin/change-password', formData);
+      const res = await axios.post('https://hnv-project.onrender.com/api/admin/change-password', formData);
       showAlert(res.data.message, 'success');
       setFormData({ username: '', oldPassword: '', newPassword: '' });
     } catch (err) {

@@ -9,7 +9,7 @@ const AdminContact = () => {
   // Fetch all messages
   const fetchMessages = () => {
     setLoading(true);
-    fetch("/api/messages")
+    fetch("https://hnv-project.onrender.com/api/messages")
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch messages");
         return res.json();
@@ -41,7 +41,7 @@ const AdminContact = () => {
     if (!window.confirm("Delete this message?")) return;
     setDeleting(id);
     try {
-      const res = await fetch(`/api/messages/${id}`, { method: "DELETE" });
+      const res = await fetch(`https://hnv-project.onrender.com/api/messages/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Failed to delete message");
       fetchMessages(); // Refetch after delete
     } catch (err) {

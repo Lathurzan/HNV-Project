@@ -5,11 +5,10 @@ const StoryForm = () => {
   const [story, setStory] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Fetch existing story (on component mount)
   useEffect(() => {
     const fetchStory = async () => {
       try {
-        const res = await axios.get("/api/story");
+        const res = await axios.get("https://hnv-project.onrender.com/api/story");
         setStory(res.data.story);
       } catch (err) {
         console.error("Failed to load story", err);
@@ -22,7 +21,7 @@ const StoryForm = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      await axios.post("/api/story", { story });
+      await axios.post("https://hnv-project.onrender.com/api/story", { story });
       alert("Story updated successfully!");
     } catch (err) {
       alert("Error updating story.");

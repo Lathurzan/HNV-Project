@@ -9,7 +9,7 @@ const Footer = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch('/api/settings')
+    fetch('https://hnv-project.onrender.com/api/settings')
       .then(res => res.json())
       .then(data => {
         setSocialLinks({

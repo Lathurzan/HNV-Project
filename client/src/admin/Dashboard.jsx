@@ -89,7 +89,7 @@ const Dashboard = () => {
 
   const fetchServiceCount = async () => {
     try {
-      const res = await fetch('/api/services/count');
+      const res = await fetch('https://hnv-project.onrender.com/api/services/count');
       const data = await res.json();
       if (res.ok) setServiceCount(data.count);
     } catch {
@@ -99,7 +99,7 @@ const Dashboard = () => {
 
   const fetchTestimonialCount = async () => {
     try {
-      const res = await fetch('/api/testimonials/count');
+      const res = await fetch('https://hnv-project.onrender.com/api/testimonials/count');
       const data = await res.json();
       if (res.ok) setTestimonialCount(data.count);
     } catch {
@@ -109,7 +109,7 @@ const Dashboard = () => {
 
   const fetchSectorCount = async () => {
     try {
-      const res = await fetch('/api/sectors/count');
+      const res = await fetch('https://hnv-project.onrender.com/api/sectors/count');
       const data = await res.json();
       if (res.ok) setSectorCount(data.count);
     } catch {
