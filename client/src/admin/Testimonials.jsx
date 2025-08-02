@@ -9,7 +9,7 @@ const Testimonials = () => {
 
   const API_URL = process.env.NODE_ENV === 'production'
     ? '/api/testimonials'
-    : 'http://localhost:5000/api/testimonials';
+    : 'https://hnv-project.onrender.com/api/testimonials';
 
   useEffect(() => {
     fetchTestimonials();

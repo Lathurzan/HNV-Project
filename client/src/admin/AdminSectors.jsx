@@ -11,7 +11,7 @@ const AdminSectors = () => {
   useEffect(() => {
     const fetchSectors = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/sectors');
+        const res = await fetch('https://hnv-project.onrender.com/api/sectors');
         const data = await res.json();
         if (res.ok) {
           setSectors(data);
@@ -44,7 +44,7 @@ const AdminSectors = () => {
       // Update sector in backend
       try {
         const sectorId = sectors[editIndex]._id;
-        const res = await fetch(`http://localhost:5000/api/sectors/${sectorId}`, {
+        const res = await fetch(`https://hnv-project.onrender.com/api/sectors/${sectorId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(newSector),
@@ -72,7 +72,7 @@ const AdminSectors = () => {
       setEditIndex(null);
     } else {
       try {
-        const res = await fetch("http://localhost:5000/api/sectors", {
+        const res = await fetch("https://hnv-project.onrender.com/api/sectors", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(newSector),
@@ -109,7 +109,7 @@ const AdminSectors = () => {
     setError("");
     const sectorId = sectors[index]._id;
     try {
-      const res = await fetch(`http://localhost:5000/api/sectors/${sectorId}`, {
+      const res = await fetch(`https://hnv-project.onrender.com/api/sectors/${sectorId}`, {
         method: "DELETE"
       });
       let data = {};

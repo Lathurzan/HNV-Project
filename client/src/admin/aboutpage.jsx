@@ -12,7 +12,7 @@ const Aboutpage = () => {
     const fetchAbout = async () => {
       setError("");
       try {
-        const res = await fetch("http://localhost:5000/api/about");
+        const res = await fetch("https://hnv-project.onrender.com/api/about");
         if (!res.ok) throw new Error("Failed to fetch about page data");
         const data = await res.json();
         setMission(data.mission || "");
@@ -35,7 +35,7 @@ const Aboutpage = () => {
     setSuccess("");
     setError("");
     try {
-      const res = await fetch("http://localhost:5000/api/about", {
+      const res = await fetch("https://hnv-project.onrender.com/api/about", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ mission, story, features }),

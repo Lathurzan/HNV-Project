@@ -13,7 +13,7 @@ const Portfolio = () => {
   useEffect(() => {
     setLoading(true);
     setError(null);
-    fetch('http://localhost:5000/api/projects') // Update this if needed
+    fetch('https://hnv-project.onrender.com/api/projects') // Update this if needed
       .then((res) => {
         if (!res.ok) throw new Error('Failed to fetch projects');
         return res.json();

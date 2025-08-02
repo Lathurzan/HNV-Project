@@ -30,7 +30,7 @@ const AdminRegister = () => {
     }
 
     try {
-      const res = await fetch('http://localhost:5000/api/admin/register', {
+      const res = await fetch('https://hnv-project.onrender.com/api/admin/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: email, password }) // using email as username
@@ -60,7 +60,7 @@ const AdminRegister = () => {
     }
 
     try {
-      const res = await fetch('http://localhost:5000/api/admin/register', {
+      const res = await fetch('https://hnv-project.onrender.com/api/admin/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: email, password, otp })
