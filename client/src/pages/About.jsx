@@ -53,7 +53,7 @@ const AboutUs2 = () => {
   useEffect(() => {
     const fetchAbout = async () => {
       try {
-        const res = await fetch("/api/about");
+        const res = await fetch("https://hnv-project.onrender.com/api/about");
         if (res.ok) {
           const data = await res.json();
           if (data) {

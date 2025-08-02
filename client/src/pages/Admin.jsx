@@ -39,7 +39,7 @@ const Admin = () => {
   useEffect(() => {
     const fetchUnreadCount = async () => {
       try {
-        const res = await fetch('/api/messages/unread-count');
+        const res = await fetch('https://hnv-project.onrender.com/api/messages/unread-count');
         if (res.ok) {
           const data = await res.json();
           setUnreadCount(data.count || 0);
@@ -57,18 +57,18 @@ const Admin = () => {
       const markAllAsRead = async () => {
         try {
           // Get all unread messages
-          const res = await fetch('/api/messages');
+          const res = await fetch('https://hnv-project.onrender.com/api/messages');
           if (res.ok) {
             const messages = await res.json();
             const unread = messages.filter(m => !m.read);
             // Mark each unread message as read
             await Promise.all(
               unread.map(msg =>
-                fetch(`/api/messages/${msg._id}/read`, { method: 'PATCH' })
+                fetch(`https://hnv-project.onrender.com/api/messages/${msg._id}/read`, { method: 'PATCH' })
               )
             );
             // Refetch unread count
-            const countRes = await fetch('/api/messages/unread-count');
+            const countRes = await fetch('https://hnv-project.onrender.com/api/messages/unread-count');
             if (countRes.ok) {
               const data = await countRes.json();
               setUnreadCount(data.count || 0);

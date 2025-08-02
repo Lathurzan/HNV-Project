@@ -22,7 +22,7 @@ const ContactUs = () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch('/api/settings');
+        const res = await fetch('https://hnv-project.onrender.com/api/settings');
         if (!res.ok) throw new Error('Failed to fetch settings');
         const data = await res.json();
         setSettings(data);
@@ -48,7 +48,7 @@ const ContactUs = () => {
     setFormSuccess("");
     setFormLoading(true);
     try {
-      const res = await fetch("/api/messages", {
+      const res = await fetch("https://hnv-project.onrender.com/api/messages", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),

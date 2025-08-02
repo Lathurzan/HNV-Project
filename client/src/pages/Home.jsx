@@ -160,7 +160,7 @@ const Home = () => {
   useEffect(() => {
     setSectorsLoading(true);
     setSectorsError(null);
-    fetch("/api/sectors")
+    fetch("https://hnv-project.onrender.com/api/sectors")
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch sectors");
         return res.json();
@@ -185,7 +185,7 @@ const Home = () => {
     useEffect(() => {
       setLoading(true);
       setError(null);
-      fetch("/api/testimonials/recent")
+      fetch("https://hnv-project.onrender.com/api/testimonials/recent")
         .then((res) => {
           if (!res.ok) throw new Error("Failed to fetch testimonials");
           return res.json();

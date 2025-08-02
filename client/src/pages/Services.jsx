@@ -27,7 +27,7 @@ const ServicesPage = () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch("/api/services");
+        const res = await fetch("https://hnv-project.onrender.com/api/services");
         if (!res.ok) throw new Error("Failed to fetch services");
         const data = await res.json();
         setServices(data);
