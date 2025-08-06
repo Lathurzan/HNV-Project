@@ -22,6 +22,10 @@ app.use((err, req, res, next) => {
 });
 
 // Routes
+app.get('/health', (req, res) => {
+  res.json({ status: 'OK', message: 'Server is running' });
+});
+
 app.use('/api/admin', require('./routes/adminRoutes'));
 app.use("/api/about", require("./routes/aboutRoutes"));
 app.use('/api/projects', require('./routes/projectRoutes'));
