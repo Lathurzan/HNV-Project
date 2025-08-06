@@ -240,7 +240,7 @@ const AdminSettings = () => {
         <button
           type="button"
           className="flex items-center gap-2 px-6 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-md transition shadow"
-          onClick={() => navigate('https://hnv-project.onrender.com/admin/change-password')}
+          onClick={() => navigate('/admin/change-password')}
         >
           <Lock size={20} /> Change Admin Password
         </button>

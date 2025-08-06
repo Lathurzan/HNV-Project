@@ -53,7 +53,7 @@ const Admin = () => {
 
   // Mark all unread messages as read when visiting /admin/contact
   useEffect(() => {
-    if (location.pathname === 'https://hnv-project.onrender.com/admin/contact') {
+    if (location.pathname === '/admin/contact') {
       const markAllAsRead = async () => {
         try {
           // Get all unread messages
@@ -88,7 +88,7 @@ const Admin = () => {
 
   const handleLogout = () => {
     if (typeof logout === 'function') logout();
-    navigate('https://hnv-project.onrender.com/admin-login', { replace: true });
+    navigate('/admin-login', { replace: true });
   };
 
   return (
@@ -113,7 +113,7 @@ const Admin = () => {
           <ul className="space-y-2">
             <li>
               <Link
-                to="https://hnv-project.onrender.com/admin"
+                to="/admin"
                 className={`flex items-center px-4 py-2.5 rounded-lg ${
                   location.pathname === '/admin'
                     ? 'bg-yellow-500 text-white'
@@ -126,7 +126,7 @@ const Admin = () => {
             </li>
             <li>
               <Link
-                to="https://hnv-project.onrender.com/admin/services"
+                to="/admin/services"
                 className={`flex items-center px-4 py-2.5 rounded-lg ${
                   location.pathname === '/admin/services'
                     ? 'bg-yellow-500 text-white'
@@ -139,7 +139,7 @@ const Admin = () => {
             </li>
            <li>
   <Link
-    to="https://hnv-project.onrender.com/admin/testimonials"
+    to="/admin/testimonials"
     className={`flex items-center px-4 py-2.5 rounded-lg ${
       location.pathname === '/admin/testimonials'
         ? 'bg-yellow-500 text-white'
@@ -152,7 +152,7 @@ const Admin = () => {
 </li>
             <li>
               <Link
-                to="https://hnv-project.onrender.com/admin/AdminPortfolio"
+                to="/admin/AdminPortfolio"
                 className={`flex items-center px-4 py-2.5 rounded-lg ${
                   location.pathname === '/admin/AdminPortfolio'
                     ? 'bg-yellow-500 text-white'
@@ -165,7 +165,7 @@ const Admin = () => {
             </li>
             <li>
               <Link
-                to="https://hnv-project.onrender.com/admin/aboutpage"
+                to="/admin/aboutpage"
                 className={`flex items-center px-4 py-2.5 rounded-lg ${
                   location.pathname === '/admin/aboutpage'
                     ? 'bg-yellow-500 text-white'
@@ -178,7 +178,7 @@ const Admin = () => {
             </li>
             <li>
               <Link
-                to="https://hnv-project.onrender.com/admin/adminsectors"
+                to="/admin/adminsectors"
                 className={`flex items-center px-4 py-2.5 rounded-lg ${
                   location.pathname === '/admin/adminsectors'
                     ? 'bg-yellow-500 text-white'
@@ -191,7 +191,7 @@ const Admin = () => {
             </li>
             <li>
               <Link
-                to="https://hnv-project.onrender.com/admin/story"
+                to="/admin/story"
                 className={`flex items-center px-4 py-2.5 rounded-lg ${
                   location.pathname === '/admin/story'
                     ? 'bg-yellow-500 text-white'
@@ -204,7 +204,7 @@ const Admin = () => {
             </li>
             <li>
               <Link
-                to="https://hnv-project.onrender.com/admin/contact"
+                to="/admin/contact"
                 className={`flex items-center px-4 py-2.5 rounded-lg ${
                   location.pathname === '/admin/contact'
                     ? 'bg-yellow-500 text-white'
@@ -224,7 +224,7 @@ const Admin = () => {
             </li>
             <li>
               <Link
-                to="https://hnv-project.onrender.com/admin/settings"
+                to="/admin/settings"
                 className={`flex items-center px-4 py-2.5 rounded-lg ${
                   location.pathname === '/admin/settings'
                     ? 'bg-yellow-500 text-white'
@@ -241,7 +241,7 @@ const Admin = () => {
             <ul className="space-y-2">
               <li>
                 <Link
-                  to="https://hnv-project.onrender.com/"
+                  to="/"
                   className="flex items-center px-4 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
                   <Home className="h-5 w-5 mr-3" />
@@ -286,16 +286,16 @@ const Admin = () => {
         {/* Content */}
         <main className="p-4 sm:p-6 md:p-8">
           <Routes>
-            <Route path="https://hnv-project.onrender.com/" element={<Dashboard />} />
-            <Route path="https://hnv-project.onrender.com/services" element={<Services />} />
-            <Route path="https://hnv-project.onrender.com/aboutpage" element={<AboutPage />} />
-            <Route path="https://hnv-project.onrender.com/testimonials" element={<Testimonials />} />
-            <Route path="https://hnv-project.onrender.com/settings" element={<SettingsComponent />} />
-            <Route path="https://hnv-project.onrender.com/adminportfolio" element={<AdminPortfolio />} />
-            <Route path="https://hnv-project.onrender.com/adminsectors" element={<AdminSectors />} />
-            <Route path="https://hnv-project.onrender.com/185791920518" element={<AdminRegister />} />
-            <Route path="https://hnv-project.onrender.com/story" element={<Story />} />
-            <Route path="https://hnv-project.onrender.com/contact" element={<Contact />} />
+            <Route path="" element={<Dashboard />} />
+            <Route path="services" element={<Services />} />
+            <Route path="aboutpage" element={<AboutPage />} />
+            <Route path="testimonials" element={<Testimonials />} />
+            <Route path="settings" element={<SettingsComponent />} />
+            <Route path="AdminPortfolio" element={<AdminPortfolio />} />
+            <Route path="adminsectors" element={<AdminSectors />} />
+            <Route path="185791920518" element={<AdminRegister />} />
+            <Route path="story" element={<Story />} />
+            <Route path="contact" element={<Contact />} />
           </Routes>
         </main>
       </div>

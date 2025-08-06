@@ -47,7 +47,7 @@ const AdminLogin = () => {
 
   const handleLogout = () => {
     if (typeof logout === 'function') logout();
-    navigate('https://hnv-project.onrender.com/admin-login', { replace: true });
+    navigate('/admin-login', { replace: true });
   };
 
   return (

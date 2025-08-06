@@ -18,7 +18,7 @@ const AdminRoute = ({ children }) => {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="https://hnv-project-frontend.onrender.com/admin-login" state={{ from: { pathname: location.pathname } }} replace />;
+    return <Navigate to="/admin-login" state={{ from: { pathname: location.pathname } }} replace />;
   }
 
   return <>{children}</>;
