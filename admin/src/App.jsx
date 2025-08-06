@@ -55,20 +55,11 @@ function App() {
             }
           />
 
-          {/* Rights management route */}
-          <Route path="/rights" element={<Rights />} />
-
-          {/* Public routes under layout */}
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Home />} />
-            <Route path="services" element={<Services />} />
-            <Route path="portfolio" element={<Portfolio />} />
-            <Route path="about" element={<About />} />
-            <Route path="contact" element={<Contact />} />
-            <Route path="*" element={<NotFound />} />
-          </Route>
+          {/* Default route redirects to admin login */}
+          <Route path="/" element={<AdminLogin />} />
+          
           {/* Catch-all NotFound for any other unmatched route */}
-          <Route path="*" element={<NotFound />} />
+          <Route path="*" element={<AdminLogin />} />
         </Routes>
       </Router>
     </AuthProvider>
