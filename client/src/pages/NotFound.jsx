@@ -16,7 +16,7 @@ const NotFound = () => {
           The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.
         </p>
         <Link 
-          to="/" 
+          to="https://hnv-project.onrender.com/" 
           className="inline-flex items-center bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-md font-medium transition-colors duration-300"
         >
           <ArrowLeft className="mr-2 h-5 w-5" />

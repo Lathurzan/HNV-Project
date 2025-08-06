@@ -48,7 +48,7 @@ const ReviewPopup = ({ open, onClose, onSuccess }) => {
     setError("");
     setLoading(true);
     try {
-      const res = await fetch("/api/testimonials", {
+      const res = await fetch("https://hnv-project.onrender.com/api/testimonials", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -141,7 +141,7 @@ const Home = () => {
   useEffect(() => {
     setStoryLoading(true);
     setStoryError(null);
-    fetch("/api/story")
+    fetch("https://hnv-project.onrender.com/api/story")
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch story");
         return res.json();
