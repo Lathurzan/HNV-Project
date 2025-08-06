@@ -1,8 +1,6 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './contexts/authContext';
-
 
 // Public layout and pages
 import Layout from './components/Layout';
@@ -12,16 +10,6 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import Portfolio from './pages/Portfolio';
 import NotFound from './pages/NotFound';
-
-// Admin pages
-import Admin from './pages/Admin';
-import AdminLogin from './admin/AdminLogin';
-import AdminRoute from './admin/AdminRoute';
-import ChangePassword from './admin/ChangePassword';
-import AdminRegister from './admin/AdminRegister/adminRegister';
-
-// Rights management
-import Rights from './rights';
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -46,45 +34,21 @@ function App() {
   }
 
   return (
-    <AuthProvider>
-      <Router>
-        <Routes>
-          {/* Admin login route */}
-          <Route path="/admin-login" element={<AdminLogin />} />
-
-          {/* Change Admin Password route */}
-          <Route path="/admin/change-password" element={<ChangePassword />} />
-
-          {/* Admin register route (separate, public) */}
-          <Route path="/admin-register" element={<AdminRegister />} />
-
-          {/* Protected admin routes */}
-          <Route
-            path="/admin/*"
-            element={
-              <AdminRoute>
-                <Admin />
-              </AdminRoute>
-            }
-          />
-
-          {/* Rights management route */}
-          <Route path="/rights" element={<Rights />} />
-
-          {/* Public routes under layout */}
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Home />} />
-            <Route path="services" element={<Services />} />
-            <Route path="portfolio" element={<Portfolio />} />
-            <Route path="about" element={<About />} />
-            <Route path="contact" element={<Contact />} />
-            <Route path="*" element={<NotFound />} />
-          </Route>
-          {/* Catch-all NotFound for any other unmatched route */}
+    <Router>
+      <Routes>
+        {/* Public routes under layout */}
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Home />} />
+          <Route path="services" element={<Services />} />
+          <Route path="portfolio" element={<Portfolio />} />
+          <Route path="about" element={<About />} />
+          <Route path="contact" element={<Contact />} />
           <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Router>
-    </AuthProvider>
+        </Route>
+        {/* Catch-all NotFound for any other unmatched route */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Router>
   );
 }
 
