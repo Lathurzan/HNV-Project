@@ -241,7 +241,7 @@ const Admin = () => {
             <ul className="space-y-2">
               <li>
                 <Link
-                  to="https://hnv-project.onrender.com"
+                  to="https://hnv-project-frontend.onrender.com"
                   className="flex items-center px-4 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
                   <Home className="h-5 w-5 mr-3" />

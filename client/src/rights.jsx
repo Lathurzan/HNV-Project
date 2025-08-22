@@ -17,7 +17,7 @@ const Rights = () => {
           <MapPin size={12} /> London, United Kingdom
         </p>
         <a
-          href="https://hnvbuilding.co.uk/"
+          href="https://hnv-project-frontend.onrender.com"
           target="_blank"
           rel="noopener noreferrer"
           className="text-xs text-blue-700 underline hover:text-blue-900 transition mt-1 inline-block"
