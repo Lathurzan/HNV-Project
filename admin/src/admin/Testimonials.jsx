@@ -7,9 +7,9 @@ const Testimonials = () => {
   const [alertType, setAlertType] = useState('');
   const [hiddenTestimonials, setHiddenTestimonials] = useState([]);
 
-  const API_URL = process.env.NODE_ENV === 'production'
-    ? '/api/testimonials'
-    : 'https://hnv-project.onrender.com/api/testimonials';
+  const API_URL = import.meta.env.MODE === 'production'
+    ? 'https://hnv-project.onrender.com/api/testimonials'
+    : '/api/testimonials';
 
   useEffect(() => {
     fetchTestimonials();
