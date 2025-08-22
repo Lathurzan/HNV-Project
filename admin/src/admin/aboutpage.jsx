@@ -13,13 +13,25 @@ const Aboutpage = () => {
       setError("");
       try {
         const res = await fetch("https://hnv-project.onrender.com/api/about");
-        if (!res.ok) throw new Error("Failed to fetch about page data");
+        if (!res.ok) {
+          if (res.status === 404) {
+            setError("No about page data found. Please add content and save.");
+          } else if (res.status === 400) {
+            setError("Invalid request. Please check your data format.");
+          } else {
+            setError("Failed to fetch about page data (" + res.status + ")");
+          }
+          setMission("");
+          setStory("");
+          setFeatures([]);
+          return;
+        }
         const data = await res.json();
         setMission(data.mission || "");
         setStory(data.story || "");
         setFeatures(Array.isArray(data.features) ? data.features : []);
       } catch (err) {
-        setError("Could not load about page data.");
+        setError("Could not load about page data. Network/server error.");
       }
     };
     fetchAbout();
@@ -34,19 +46,36 @@ const Aboutpage = () => {
   const handleUpdate = async () => {
     setSuccess("");
     setError("");
+    // Ensure features is always an array of objects with title/description
+    const validFeatures = Array.isArray(features) && features.length > 0
+      ? features.map(f => ({
+          title: f.title || "",
+          description: f.description || ""
+        }))
+      : [
+          { title: "", description: "" },
+          { title: "", description: "" },
+          { title: "", description: "" },
+          { title: "", description: "" }
+        ];
     try {
       const res = await fetch("https://hnv-project.onrender.com/api/about", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mission, story, features }),
+        body: JSON.stringify({ mission, story, features: validFeatures }),
       });
-      const data = await res.json();
+      let data = {};
+      try { data = await res.json(); } catch {}
       if (res.ok) {
         setSuccess("✅ Content updated successfully!");
         setButtonState("saved");
         setTimeout(() => setButtonState("default"), 5000);
       } else {
-        setError(data.message || "Failed to update content");
+        if (res.status === 400) {
+          setError(data.message || "Invalid about page data. Please fill all fields.");
+        } else {
+          setError(data.message || `Failed to update content (status ${res.status})`);
+        }
       }
     } catch (err) {
       setError("Server error. Please try again.");

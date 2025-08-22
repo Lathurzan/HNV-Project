@@ -100,8 +100,16 @@ const Dashboard = () => {
   const fetchTestimonialCount = async () => {
     try {
       const res = await fetch('https://hnv-project.onrender.com/api/testimonials/count');
+      if (!res.ok) {
+        if (res.status === 404) {
+          setTestimonialCount(0); // No testimonials route/data
+        } else {
+          setTestimonialCount(0);
+        }
+        return;
+      }
       const data = await res.json();
-      if (res.ok) setTestimonialCount(data.count);
+      setTestimonialCount(typeof data.count === 'number' ? data.count : 0);
     } catch {
       setTestimonialCount(0);
     }
