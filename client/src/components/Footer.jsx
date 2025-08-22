@@ -140,7 +140,7 @@ const Footer = () => {
 
       <div className="text-center text-gray-500 text-xs mt-8">
         &copy; {new Date().getFullYear()} HNV Building.
-        <span> <Link to="https://hnv-project.onrender.com/api/rights" className="hover:text-yellow-500 transition" onClick={scrollToTop}>All rights reserved.</Link></span>
+        <span> <Link to="https://hnv-project.onrender.com/rights" className="hover:text-yellow-500 transition" onClick={scrollToTop}>All rights reserved.</Link></span>
       </div>
     </footer>
   );
