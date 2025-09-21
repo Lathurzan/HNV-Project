@@ -55,27 +55,7 @@ const ServicesPage = () => {
 
   return (
     <>
-     <Helmet>
-        <title>HNV Construction & Home Renovation Preston | Services</title>
-        <meta
-          name="description"
-          content="Explore HNV Building services in Preston: home renovation, house extensions, and commercial construction."
-        />
-        <link rel="canonical" href="https://hnv-project-frontend.onrender.com/services" />
-      </Helmet>
 
-      <div className="max-w-7xl mx-auto px-4 py-16">
-        <h1 className="text-4xl font-bold mb-8 text-center">Our Services in Preston</h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {services.map(service => (
-            <div key={service._id} className="border p-6 rounded-xl shadow-lg">
-              <img src={service.image} alt={`${service.title} Preston`} className="w-full h-48 object-cover rounded-md mb-4" />
-              <h2 className="text-2xl font-semibold mb-2">{service.title}</h2>
-              <p>{service.description}</p>
-            </div>
-          ))}
-        </div>
-      </div>
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
