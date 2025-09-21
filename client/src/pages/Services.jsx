@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Helmet } from "react-helmet-async";
+import { Helmet } from "react-helmet";
 import { motion } from "framer-motion";
 import HNV from "../assets/HNV.jpg";
 

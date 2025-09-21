@@ -1,4 +1,3 @@
-import { HelmetProvider } from "react-helmet-async";
 import React from 'react';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -9,9 +8,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 
 const root = createRoot(document.getElementById('root'));
 root.render(
-  <HelmetProvider>
-    <StrictMode>
-      <App />
-    </StrictMode>
-  </HelmetProvider>
+  <StrictMode>
+    <App />
+  </StrictMode>
 );
