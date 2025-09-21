@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
 import HNV from "../assets/HNV.jpg";
 
@@ -51,13 +52,22 @@ const ServicesPage = () => {
   const handleNext = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages - 1));
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 50 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.6 }}
-      className="bg-white text-gray-800"
-    >
+    <>
+      <Helmet>
+        <title>Our Construction Services | HNV Building</title>
+        <meta
+          name="description"
+          content="Explore renovation, house extensions, and commercial construction services in London."
+        />
+        <link rel="canonical" href="https://hnvbuilding.co.uk/services" />
+      </Helmet>
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.6 }}
+        className="bg-white text-gray-800"
+      >
       {/* Hero Section */}
       <section className="relative w-full">
         <img
@@ -163,7 +173,8 @@ const ServicesPage = () => {
           </div>
         </div>
       </div>
-    </motion.div>
+      </motion.div>
+    </>
   );
 };
 

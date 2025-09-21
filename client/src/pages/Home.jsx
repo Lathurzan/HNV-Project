@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { FaQuoteLeft } from "react-icons/fa";
 import HeroSection from "../components/HeroSection";
 import { motion } from "framer-motion";
@@ -248,7 +249,16 @@ const Home = () => {
   const [showReview, setShowReview] = useState(false);
 
   return (
-    <div className="bg-gray-50">
+    <>
+      <Helmet>
+        <title>HNV Building | London Construction & Renovation</title>
+        <meta
+          name="description"
+          content="Welcome to HNV Building. We provide professional home renovation, house extensions, and commercial construction services across London."
+        />
+        <link rel="canonical" href="https://hnvbuilding.co.uk/" />
+      </Helmet>
+      <div className="bg-gray-50">
       {/* Hero Section */}
       <motion.div
         initial={{ opacity: 0, y: -50 }}
@@ -433,7 +443,8 @@ const Home = () => {
           </div>
         )}
       </motion.section>
-    </div>
+      </div>
+    </>
   );
 };
 
