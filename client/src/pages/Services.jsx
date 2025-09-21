@@ -55,45 +55,27 @@ const ServicesPage = () => {
 
   return (
     <>
-      {/* SEO Meta Tags */}
-      <Helmet>
-        <title>Our Construction Services | HNV Building</title>
+     <Helmet>
+        <title>HNV Construction & Home Renovation Preston | Services</title>
         <meta
           name="description"
-          content="Explore renovation, house extensions, and commercial construction services in London."
+          content="Explore HNV Building services in Preston: home renovation, house extensions, and commercial construction."
         />
-        <meta name="robots" content="index, follow" />
         <link rel="canonical" href="https://hnv-project-frontend.onrender.com/services" />
-
-        {/* Open Graph */}
-        <meta property="og:type" content="website" />
-        <meta
-          property="og:url"
-          content="https://hnv-project-frontend.onrender.com/services"
-        />
-        <meta property="og:title" content="Our Construction Services | HNV Building" />
-        <meta
-          property="og:description"
-          content="Explore renovation, house extensions, and commercial construction services in London."
-        />
-        <meta
-          property="og:image"
-          content="https://hnv-project-frontend.onrender.com/images/HNV.jpg"
-        />
-
-        {/* Twitter */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Our Construction Services | HNV Building" />
-        <meta
-          name="twitter:description"
-          content="Explore renovation, house extensions, and commercial construction services in London."
-        />
-        <meta
-          name="twitter:image"
-          content="https://hnv-project-frontend.onrender.com/images/HNV.jpg"
-        />
       </Helmet>
 
+      <div className="max-w-7xl mx-auto px-4 py-16">
+        <h1 className="text-4xl font-bold mb-8 text-center">Our Services in Preston</h1>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {services.map(service => (
+            <div key={service._id} className="border p-6 rounded-xl shadow-lg">
+              <img src={service.image} alt={`${service.title} Preston`} className="w-full h-48 object-cover rounded-md mb-4" />
+              <h2 className="text-2xl font-semibold mb-2">{service.title}</h2>
+              <p>{service.description}</p>
+            </div>
+          ))}
+        </div>
+      </div>
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
@@ -121,28 +103,26 @@ const ServicesPage = () => {
           <div className="flex flex-col lg:flex-row gap-10 justify-center items-center">
             {/* Left Column */}
             <div className="lg:w-1/2">
-              <h2 className="text-2xl font-extrabold leading-tight mb-3">
-                Discover a Range of <br />
-                Services Tailored to <br />
-                Your Needs
-              </h2>
-              <div className="w-14 h-1 bg-yellow-400 mb-6" />
-              <p className="text-gray-600 mb-8 max-w-md">
-                Your trusted partner for a wide range of building services. With a
-                commitment to quality craftsmanship and a customer-centric approach,
-                we bring your visions to life. Explore our diverse services tailored
-                to meet your unique needs.
-              </p>
-              <ul className="space-y-4 max-w-md">
-                {serviceList.map((item, index) => (
-                  <li key={index} className="flex items-center space-x-3">
-                    <span className="flex items-center justify-center w-6 h-6 rounded-full bg-yellow-400 text-white">
-                      <i className="fas fa-check text-xs"></i>
-                    </span>
-                    <span className="font-semibold text-gray-900">{item}</span>
-                  </li>
-                ))}
-              </ul>
+             <h2 className="text-2xl font-extrabold leading-tight mb-3">
+  HNV Renovation & Construction <br />
+  Services in Preston
+</h2>
+<div className="w-14 h-1 bg-yellow-400 mb-6" />
+<p className="text-gray-600 mb-8 max-w-md">
+  Your trusted partner for home renovation, house extensions, and commercial construction in Preston. 
+  With a commitment to quality craftsmanship and a customer-centric approach, we bring your visions 
+  to life. Explore our diverse services tailored to meet your unique needs across Preston.
+</p>
+<ul className="space-y-4 max-w-md">
+  {serviceList.map((item, index) => (
+    <li key={index} className="flex items-center space-x-3">
+      <span className="flex items-center justify-center w-6 h-6 rounded-full bg-yellow-400 text-white">
+        <i className="fas fa-check text-xs"></i>
+      </span>
+      <span className="font-semibold text-gray-900">{item} in Preston</span>
+    </li>
+  ))}
+</ul>
 
               {/* Example hidden link */}
               <div className="mt-6">

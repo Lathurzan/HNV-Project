@@ -82,10 +82,23 @@ const AboutUs2 = () => {
   return (
     <>
       <Helmet>
-        <title>About Us | HNV Building</title>
-        <meta name="description" content="Learn more about HNV Building, our mission, and our commitment to quality construction in London." />
-        <link rel="canonical" href="https://hnvbuilding.co.uk/about" />
+        <title>About HNV Renovation & Construction Preston | Trusted Builders</title>
+        <meta
+          name="description"
+          content="HNV Building is a trusted construction and renovation company in Preston. Learn about our history, values, and commitment to quality home extensions and renovations."
+        />
+        <link rel="canonical" href="https://hnv-project-frontend.onrender.com/about" />
       </Helmet>
+
+      <div className="max-w-6xl mx-auto px-4 py-16">
+        <h1 className="text-4xl font-bold mb-6 text-center">About HNV Building in Preston</h1>
+        <p className="text-gray-700 text-lg mb-4">
+          HNV Building provides professional home renovation, house extensions, and commercial construction services in Preston. We pride ourselves on delivering quality workmanship and exceptional customer service.
+        </p>
+        <p className="text-gray-700 text-lg">
+          Whether you need a full home renovation, an extension, or commercial building services, HNV Building in Preston is your trusted partner.
+        </p>
+      </div>
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}

@@ -241,56 +241,42 @@ const Home = () => {
 
   return (
     <>
-      <Helmet>
-        <title>HNV Building | London Construction & Renovation</title>
+        <Helmet>
+        <title>HNV Renovation & Construction Preston | Home Extensions & Renovation</title>
         <meta
           name="description"
-          content="Professional home renovation, house extensions, and commercial construction services across London."
+          content="HNV Building provides trusted renovation, construction, and home extension services in Preston. Contact us for professional home and commercial improvements."
         />
-        <link rel="canonical" href="https://hnvbuilding.co.uk/" />
-
-        {/* Open Graph / Twitter */}
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://hnvbuilding.co.uk/" />
-        <meta property="og:title" content="HNV Building | London Construction & Renovation" />
-        <meta
-          property="og:description"
-          content="Professional home renovation, house extensions, and commercial construction services across London."
-        />
-        <meta property="og:image" content={HNV} />
-
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="HNV Building | London Construction & Renovation" />
-        <meta
-          name="twitter:description"
-          content="Professional home renovation, house extensions, and commercial construction services across London."
-        />
-        <meta name="twitter:image" content={HNV} />
-
-        {/* JSON-LD Structured Data */}
-        <script type="application/ld+json">
-          {`
-            {
-              "@context": "https://schema.org",
-              "@type": "LocalBusiness",
-              "name": "HNV Building",
-              "image": "${HNV}",
-              "url": "https://hnvbuilding.co.uk/",
-              "telephone": "+44-123-456-7890",
-              "address": {
-                "@type": "PostalAddress",
-                "streetAddress": "123 London Road",
-                "addressLocality": "London",
-                "postalCode": "E1 6AN",
-                "addressCountry": "UK"
-              },
-              "description": "Professional home renovation, house extensions, and commercial construction services in London.",
-              "priceRange": "$$",
-              "openingHours": "Mo-Fr 08:00-18:00"
-            }
-          `}
-        </script>
+        <link rel="canonical" href="https://hnv-project-frontend.onrender.com/" />
       </Helmet>
+
+      <div className="bg-gray-50">
+        {/* Hero Section */}
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }}>
+          <HeroSection />
+        </motion.div>
+
+       {/* Story Section with SEO Headings */}
+<section className="py-16 px-4 md:px-16 text-center">
+  <h1 className="text-4xl font-bold mb-4">
+    HNV Renovation & Construction in Preston
+  </h1>
+  <h2 className="text-2xl font-semibold mb-6">
+    Trusted Home Renovation & Extensions
+  </h2>
+  <p className="text-gray-700 text-lg max-w-3xl mx-auto mb-6">
+    We provide professional renovation, house extensions, and construction services across Preston.
+  </p>
+  <p className="text-gray-700 text-lg max-w-3xl mx-auto">
+    {storyLoading ? "Loading story..." : story}
+  </p>
+  <img
+    src={HNV}
+    alt="HNV Renovation Services Preston"
+    className="mt-8 mx-auto rounded-xl"
+  />
+</section>
+      </div>
 
       <div className="bg-gray-50">
         {/* Hero Section */}
