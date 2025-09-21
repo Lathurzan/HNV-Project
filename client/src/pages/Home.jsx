@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Helmet } from "react-helmet-async";
+import { Helmet } from "react-helmet";
 import { FaQuoteLeft } from "react-icons/fa";
 import HeroSection from "../components/HeroSection";
 import { motion } from "framer-motion";
